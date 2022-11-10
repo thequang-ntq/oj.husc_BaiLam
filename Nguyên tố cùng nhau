@@ -1,0 +1,56 @@
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+#include <bits/stdc++.h>
+#define taskname "E"
+using namespace std;
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+typedef long long ll;
+const int N = 1e7;
+
+vector<int> minPrime(N + 10, 0), mu(N + 10, 0);
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+void Solve(){
+	for (int i = 2; i <= sqrt(N); i++)
+		if (minPrime[i] == 0) 
+			for (int j = i * i; j <= N; j += i)
+				if (minPrime[j] == 0) minPrime[j] = i;
+	for (int i = 1; i <= N; i++) 
+		if (minPrime[i] == 0) minPrime[i] = i;
+
+	mu[1] = 1;
+	for (int i = 2; i <= N; i++)
+		if (minPrime[i] == minPrime[i / minPrime[i]]) mu[i] = 0;
+		else mu[i] = -1 * mu[i / minPrime[i]];
+
+	auto count = [](ll l, ll r, ll x) {
+		return r / x - (l - 1) / x;
+	};
+
+	ll a, b, c, d; cin >> a >> b >> c >> d;
+	ll ans = (b - a + 1) * (d - c + 1);
+	for (int i = 2; i <= N; i++) 
+		ans += mu[i] * count(a, b, i) * count(c, d, i);
+
+	cout << ans;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
+//AUTHORS : NGO VAN HAI K45 CNTT //AUTHORS : NGO VAN HAI K45 CNTT
