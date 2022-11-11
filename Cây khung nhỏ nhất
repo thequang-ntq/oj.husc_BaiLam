@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define F first
+#define S second
+typedef long long ll;
+typedef long double lf;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+const lf PI = acos(-1);
+const string FNAME = "";
+
+class DSU {
+	private:
+		ll *parent, *depth;
+	public:
+		DSU() {}
+		DSU(ll num) {
+			parent = new ll[num + 1]();
+			depth = new ll[num + 1]();
+			for (ll idx = 1; idx <= num; idx ++) {
+				parent[idx] = idx;
+				depth[idx] = 0;
+			}
+		}
+		ll findSet(ll v) {
+			while (v != parent[v]) {
+				v = parent[v] = parent[parent[v]];
+			}
+			return v;
+		}
+		bool unionSet(ll lhs, ll rhs) {
+			if ((lhs = findSet(lhs)) != (rhs = findSet(rhs))) {
+				if (depth[lhs] < depth[rhs]) {
+					swap(lhs, rhs);
+				}
+				parent[rhs] = lhs;
+				if (depth[lhs] == depth[rhs]) {
+					depth[lhs] ++;
+				}
+				return true;
+			}
+			return false;
+		}
+};
+
+inline ll mstKruskal(ll num, vector<pair<pair<ll, ll>, ll>> edges) {
+	ll res = 0, cnt = 1;
+	DSU dsu(num);
+	sort(begin(edges), end(edges), [] (pair<pair<ll, ll>, ll> lhs, pair<pair<ll, ll>, ll> rhs) {
+		return lhs.S < rhs.S;
+	});
+	for (pair<pair<ll, ll>, ll> edge: edges) {
+		if (dsu.unionSet(edge.F.F, edge.F.S)) {
+			res += edge.S;
+			cnt ++;
+		}
+	}
+	return cnt == num ? res : -1;
+}
+
+int main(int argc, wchar_t** argv, wchar_t** envp) {
+	ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+//	freopen((FNAME + ".INP").c_str(), "r", stdin);
+//	freopen((FNAME + ".OUT").c_str(), "w", stdout);
+	ll n, m;	cin >> n >> m;
+	vector<pair<pair<ll, ll>, ll>> edges;
+	while(m --){
+		ll x, y, w;	cin >> x >> y >> w;
+		edges.push_back({{x - 1, y - 1}, w});
+	}
+	ll res = mstKruskal(n, edges);
+	cout << (res == -1 ? "IMPOSSIBLE" : to_string(res));
+	return EXIT_SUCCESS;
+}
