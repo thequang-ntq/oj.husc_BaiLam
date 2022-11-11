@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+#define taskname "K"
+using namespace std;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	int n, m; cin >> n >> m;
+	vector<int> adj[n + 1];
+	for (int i = 1; i <= m; i++) {
+		int u, v; cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+
+	for (int i = 1; i <= n; i++)
+		cout << adj[i].size() << "\n";
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
