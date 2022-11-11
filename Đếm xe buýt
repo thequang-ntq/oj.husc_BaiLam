@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+#define taskname "T"
+using namespace std;
+
+typedef long long ll;
+const int N = 5e5+10;
+
+int n;
+vector<int> adj[N];
+ll numChild[N];
+ll ans[N];
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+void dfs1(int u, int p){
+	numChild[u] = 1;
+	for (int v: adj[u]) {
+		if (v == p) continue;
+		dfs1(v, u);
+		numChild[u] += numChild[v];
+	}
+}
+void dfs2(int u, int p, ll numChildParent) {
+	ll prefix = numChildParent;
+	ans[u] += numChildParent * 2;
+
+	for (int v: adj[u]) {
+		if (v == p) continue;
+		ans[u] += numChild[v] * 2 + prefix * numChild[v] * 2;
+		prefix += numChild[v];
+		dfs2(v, u, n - numChild[v]);
+	}
+}
+void Solve(){
+	cin >> n;
+	for (int i = 1; i < n; i++){
+		int u, v; cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+
+	dfs1(1, 1);
+	dfs2(1, 1, 0);
+	
+	for (int i = 1; i <= n; i++) cout << ans[i] << "\n";
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
