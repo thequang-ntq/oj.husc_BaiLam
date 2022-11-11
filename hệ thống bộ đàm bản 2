@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+#define taskname "O"
+using namespace std;
+
+typedef array<int, 3> Point;
+const int N = 210;
+
+int n;
+Point A[N];
+vector<int> adj[N];
+bool visited[N];
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+bool check(Point a, Point b) {
+	return (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]) <= a[2] * a[2];
+}
+int dfs(int u) {
+	int cnt = 1;
+	visited[u] = true;
+	for (auto &v: adj[u]) 
+		if (!visited[v]) cnt += dfs(v);
+	return cnt;
+}
+void Solve(){
+	cin >> n;
+	for (int i = 1; i <= n; i++) cin >> A[i][0] >> A[i][1] >> A[i][2];
+	for (int i = 1; i <= n; i++)
+		for (int j = 1; j <= n; j++) if (i != j) 
+			if (check(A[i], A[j])) adj[i].push_back(j);
+	
+	int ans = 0;
+	for (int i = 1; i <= n; i++) {
+		memset(visited, false, sizeof(visited));
+		ans = max(ans, dfs(i));
+	}
+
+	cout << ans << "\n";
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
