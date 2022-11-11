@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+#define taskname "E"
+using namespace std;
+
+const int N = 110;
+
+int n, m;
+vector<int> adj[N];
+int c[N][N];
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+int dijkstra(int s, int t, vector<int> &path) {
+	vector<int> trace(n + 1, 0), visited(n + 1, 0);
+	vector<int> dist(n + 1, 1e9);
+	priority_queue<
+		pair<int, int>, 
+		vector<pair<int, int>>, 
+		greater<pair<int, int>>
+	> PQ;
+
+	trace[s] = s;
+	dist[s] = 0;
+	PQ.push({dist[s], s});
+
+	while (!PQ.empty()) {
+		int u = PQ.top().second; PQ.pop();
+		if (visited[u]) continue;
+		visited[u] = true;
+
+		for (int &v: adj[u]) {
+			if (visited[v]) continue;
+			if (dist[v] > dist[u] + c[u][v]) {
+				dist[v] = dist[u] + c[u][v];
+				trace[v] = u; 
+				PQ.push({dist[v], v});
+			}
+		}
+	}
+
+	int v = t;
+	path.push_back(t);
+	do {
+		v = trace[v];
+		path.push_back(v);
+	}
+	while (v != s);
+	reverse(path.begin(), path.end());
+
+	return dist[t];
+}
+void Solve(){
+	cin >> n >> m;
+	for (int i = 1; i <= m; i++) {
+		int u, v, cost; cin >> u >> v >> cost;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+		c[u][v] = c[v][u] = cost;
+	}
+
+	vector<int> path, tmp;
+	int maxDist = 0, minDist = dijkstra(1, n, path);
+
+	for (int i = 1; i < path.size(); i++) {
+		int u = path[i-1], v = path[i];
+		c[u][v] = c[v][u] = c[u][v] * 2;
+		maxDist = max(maxDist, dijkstra(1, n, tmp));
+		c[u][v] = c[v][u] = c[u][v] / 2;
+	}
+
+	cout << maxDist - minDist;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
