@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define F first
+#define S second
+typedef long long ll;
+typedef long double lf;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+const lf PI = acos(-1);
+const string FNAME = "P";
+
+int main(int argc, wchar_t** argv, wchar_t** envp) {
+	ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+//	freopen((FNAME + ".INP").c_str(), "r", stdin);
+//	freopen((FNAME + ".OUT").c_str(), "w", stdout);
+	vector<ll> moveX = {-1, -1, 1, 1, -1, 0, 0, 1},
+			   moveY = {-1, 1, -1, 1, 0, -1, 1, 0};
+	ll n, m;	cin >> n >> m;
+	vector<string> vs(n);
+	vector<vector<bool>> visited(n, vector<bool>(m, false));
+	vector<vector<ll>> val(n, vector<ll>(m, LLONG_MAX));
+	queue<pair<pair<ll, ll>, ll>> q;
+	for(string &s: vs)
+		cin >> s;
+	for(ll i = 0; i < n; i ++)
+		for(ll j = 0; j < m; j ++){
+			if(vs[i][j] == 'W'){
+				val[i][j] = -1;
+			}else{
+				for(ll k = 0; k < moveX.size(); k ++)
+					if(i + moveX[k] >= 0 && i + moveX[k] < n
+					&& j + moveY[k] >= 0 && j + moveY[k] < m
+					&& vs[i + moveX[k]][j + moveY[k]] == 'W'){
+						q.push({{i, j}, 0});
+						val[i][j] = 0;
+						break;
+					}
+			}
+		}
+	while(q.size()){
+		pair<pair<ll, ll>, ll> cur = q.front();
+		q.pop();
+		if(val[cur.F.F][cur.F.S] >= cur.S)
+			for(ll k = 0; k < moveX.size(); k ++)
+				if(cur.F.F + moveX[k] >= 0 && cur.F.F + moveX[k] < n
+				&& cur.F.S + moveY[k] >= 0 && cur.F.S + moveY[k] < m
+				&& cur.S + (vs[cur.F.F][cur.F.S] != vs[cur.F.F + moveX[k]][cur.F.S + moveY[k]]) < val[cur.F.F + moveX[k]][cur.F.S + moveY[k]]){
+					ll valNext = cur.S + (vs[cur.F.F][cur.F.S] != vs[cur.F.F + moveX[k]][cur.F.S + moveY[k]]);
+					q.push({{cur.F.F + moveX[k], cur.F.S + moveY[k]}, valNext});
+					val[cur.F.F + moveX[k]][cur.F.S + moveY[k]] = valNext;
+				}
+	}
+	vector<ll> ump(256, LLONG_MAX);
+	for(ll i = 0; i < n; i ++)
+		for(ll j = 0; j < m; j ++)
+			ump[vs[i][j]] = min(ump[vs[i][j]], val[i][j]);
+	for(char ch = 'A'; ch <= 'Z'; ch ++)
+		if(ump[ch] >= 0 && ump[ch] != LLONG_MAX)
+			cout << (char)ch << ' ' << ump[ch] << '\n';
+	return EXIT_SUCCESS;
+}
