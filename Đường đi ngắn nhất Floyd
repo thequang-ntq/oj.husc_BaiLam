@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define F first
+#define S second
+typedef long long ll;
+typedef long double lf;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+const lf PI = acos(-1);
+const string FNAME = "";
+
+inline void floyd(ll num, vector<vector<ll>> &res) {
+	for (ll k = 0; k < num; k ++) {
+		for (ll i = 0; i < num; i ++) {
+			for (ll j = 0; j < num; j ++) {
+				if (res[i][k] + res[k][j] < res[i][j] && res[i][k] != LLONG_MAX && res[k][j] != LLONG_MAX) {
+					res[i][j] = res[i][k] + res[k][j];
+				}
+			}
+		}
+	}
+}
+
+int main(int argc, wchar_t** argv, wchar_t** envp) {
+	ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+//	freopen((FNAME + ".INP").c_str(), "r", stdin);
+//	freopen((FNAME + ".OUT").c_str(), "w", stdout);
+	ll n, m, q;	cin >> n >> m >> q;
+	vector<vector<ll>> res(n, vector<ll>(n, LLONG_MAX));
+	while(m --){
+		ll x, y, w;	cin >> x >> y >> w;
+		x --, y --;
+		res[x][y] = res[y][x] = min(res[x][y], w);
+	}
+	for(ll i = 0; i < n; i ++)
+		res[i][i] = 0;
+	floyd(n, res);
+	while(q --){
+		ll x, y;	cin >> x >> y;
+		x --, y --;
+		cout << (res[x][y] == LLONG_MAX ? -1 : res[x][y]) << '\n';
+	}
+	return EXIT_SUCCESS;
+}
