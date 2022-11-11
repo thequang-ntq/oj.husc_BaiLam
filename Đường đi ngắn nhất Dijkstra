@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define F first
+#define S second
+typedef long long ll;
+typedef long double lf;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+const lf PI = acos(-1);
+const string FNAME = "";
+
+inline void dijkstra(ll start, vector<ll> &res, vector<ll> &parent, vector<pair<ll, ll>> edge[]) {
+	priority_queue<pair<ll, ll>> pQueue;
+	fill(begin(res), end(res), LLONG_MAX);
+	fill(begin(parent), end(parent), -1LL);
+	vector<bool> visited(res.size(), false);
+	res[start] = 0;
+	pQueue.push({0, start});
+	while (pQueue.size()) {
+		ll cur = pQueue.top().S;
+		pQueue.pop();
+		if (!visited[cur]) {
+			visited[cur] = true;
+			for (pair<ll, ll> next: edge[cur]) {
+				ll nextVertex = next.F, nextVal = next.S;
+				if (res[cur] + nextVal < res[nextVertex] && res[cur] != LLONG_MAX) {
+					res[nextVertex] = res[cur] + nextVal;
+					parent[nextVertex] = cur;
+					pQueue.push({-res[nextVertex], nextVertex});
+				}
+			}
+		}
+	}
+}
+
+int main(int argc, wchar_t** argv, wchar_t** envp) {
+//	ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+//	freopen((FNAME + ".INP").c_str(), "r", stdin);
+//	freopen((FNAME + ".OUT").c_str(), "w", stdout);
+	ll n, m;	cin >> n >> m;
+	vector<pair<ll, ll>> edges[n];
+	vector<ll> res(n), parent(n);
+	while(m --){
+		ll a, b, c;	cin >> a >> b >> c;
+		edges[a - 1].push_back({b - 1, c});
+	}
+	dijkstra(0, res, parent, edges);
+	for(ll x: res)
+		cout << x << ' ';
+	return EXIT_SUCCESS;
+}
