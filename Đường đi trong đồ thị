@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+#define taskname "H"
+using namespace std;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	int n, m; cin >> n >> m;
+	vector<int> adj[n];
+	for (int i = 1; i <= m; i++){
+		int u, v; cin >> u >> v;
+		adj[--u].push_back(--v);
+		adj[v].push_back(u);
+	}
+
+	vector<vector<int64_t>> f(n, vector<int64_t>(1 << n, 0));
+	vector<vector<bool>> d(n, vector<bool>(1 << n, false));
+	queue<pair<int, int>> Q;
+
+	f[0][1] = 1;
+	Q.push({0, 1});
+	while (!Q.empty()) {
+		int u, x; tie(u, x) = Q.front(); Q.pop();
+
+		for (int v: adj[u]) {
+			if (x & (1 << v)) continue;
+			int y = x | (1 << v);
+			f[v][y] += f[u][x];
+
+			if (!d[v][y]) Q.push({v, y});
+			d[v][y] = true;
+		}
+	}
+
+	int64_t ans = 0;
+	for (int i = 0; i < n; i++) ans += f[i][(1 << n) - 1];
+	cout << ans;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
