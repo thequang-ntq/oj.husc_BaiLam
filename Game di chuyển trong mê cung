@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+#define taskname "F"
+using namespace std;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	int n, m; cin >> n >> m;
+	vector<vector<int>> f(n + 1, vector<int>(m + 1, 1e9));
+	for (int i = 1; i <= n; i++)
+		for (int j = 1; j <= m; j++) {
+			cin >> f[i][j];
+			if (i == 1 && j == 1) continue;
+			f[i][j] += min(f[i-1][j], f[i][j-1]);
+		}
+	cout << f[n][m];
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
