@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+#define taskname "U"
+using namespace std;
+
+const int inf = 0x3c3c3c3c;
+
+class Tarjan {
+protected:
+	int timer = 0, cnt = 0;
+	vector<int> num, low;
+	vector<vector<int>> adj;
+	stack<int> st;
+
+public: 
+	Tarjan(int _sz, const vector<vector<int>> &_adj) {
+		low.assign(_sz + 1, 0);
+		num.assign(_sz + 1, 0);
+		adj = _adj;
+
+		for (int i = 1; i <= _sz; i++)
+			if (!num[i]) visit(i, i);
+	}
+
+	void visit(int u, int p){
+		num[u] = low[u] = ++timer;
+		st.push(u);
+
+		for (int v: adj[u]) {
+			if (v == p) continue;
+			if (num[v]) low[u] = min(low[u], num[v]);
+			else {
+				visit(v, u);
+				low[u] = min(low[u], low[v]);
+			}
+		}
+
+		if (low[u] == num[u]) {
+			cnt++;
+			int v = 0;
+			do {
+				v = st.top(); st.pop();
+				low[v] = num[v] = inf;
+			}
+			while (v != u);
+		}
+	}
+
+	int get(){ return cnt; }
+};
+
+int t;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+	cin >> t;
+}
+
+void Solve(){
+	int n, m; cin >> n >> m;
+	vector<vector<int>> adj(n + 1);
+	for (int i = 1; i <= m; i++) {
+		int u, v; cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+
+	Tarjan tarjan(n, adj);
+
+	if (tarjan.get() == 1) cout << "Yes\n";
+	else cout << "No\n";
+}
+
+int main(){
+	Input();
+	while (t--) Solve();
+	return 0;
+}
