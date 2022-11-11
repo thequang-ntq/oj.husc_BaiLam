@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+#define taskname "I"
+using namespace std;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	int n; cin >> n;
+	vector<pair<int, int64_t>> adj[n + 1];
+	for (int i = 1; i < n; i++) {
+		int u, v, c; cin >> u >> v >> c;
+		adj[u].push_back({v, c});
+		adj[v].push_back({u, c});
+	}
+
+	vector<int64_t> dist(n + 1, 1e18);
+	auto dijkstra = [&](int s){	
+		priority_queue<
+			pair<int64_t, int>, 
+			vector<pair<int64_t, int>>, 
+			greater<pair<int64_t, int>>
+		> PQ;
+		vector<bool> visited(n + 1, false);
+		dist[s] = 0;
+		PQ.push({dist[s], s});
+
+		while (!PQ.empty()) {
+			int u = PQ.top().second; PQ.pop();
+			if (visited[u]) continue;
+			visited[u] = true;
+
+			for (auto e: adj[u]) {
+				int v = e.first, c = e.second;
+				if (visited[v]) continue;
+				if (dist[v] > dist[u] + c) {
+					dist[v] = dist[u] + c;
+					PQ.push({dist[v], v});
+				}
+			}
+		}
+	};
+
+	int q, k; cin >> q >> k;
+	dijkstra(k);
+
+	while (q--){
+		int u, v; cin >> u >> v;
+		cout << dist[u] + dist[v] << "\n";
+	}
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
