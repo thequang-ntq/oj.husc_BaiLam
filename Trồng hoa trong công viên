@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+#define taskname "D"
+using namespace std;
+
+typedef pair<int, int> p2i;
+const int N = 1e4+10;
+
+int n, m, ans = 0;
+vector<p2i> adj[N]; 
+int dist[N];
+bool visited[N];
+vector<p2i> trace[N];
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+void find(int u){
+	if (u == 0) return ;
+	visited[u] = true;
+
+	for (auto &e: trace[u]) {
+		ans += e.second;
+		if (!visited[e.first]) find(e.first);
+	}
+}
+void Solve(){
+	cin >> n >> m;
+	for (int i = 1; i <= m; i++) {
+		int u, v, c; cin >> u >> v >> c;
+		adj[u].push_back({v, c});
+		adj[v].push_back({u, c});
+	}
+
+	for (int i = 1; i < n; i++) dist[i] = 1e9;
+
+	priority_queue<
+		pair<int, int>,
+		vector<pair<int, int>>,
+		greater<pair<int, int>>
+	> PQ;
+	PQ.push({dist[0], 0});
+	
+	while (!PQ.empty()) {
+		int u = PQ.top().second; PQ.pop();
+		if (visited[u]) continue;
+		visited[u] = true;
+
+		if (u == n - 1) break;
+
+		for (auto &e: adj[u]) {
+			int v = e.first, c = e.second;
+			if (visited[v]) continue;
+			if (dist[v] == dist[u] + c) {
+				trace[v].push_back({u, c});
+			}
+			else if (dist[v] > dist[u] + c) {
+				dist[v] = dist[u] + c;
+				trace[v].clear();
+				trace[v].push_back({u, c});
+				PQ.push({dist[v], v});
+			}
+		}
+	}
+
+	memset(visited, false, sizeof(visited));
+	find(n - 1);
+
+	cout << ans * 2;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
