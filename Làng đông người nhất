@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+const int inf = 1e6 + 10;
+bool visited[inf];
+vector<int> adj[inf];
+
+void dfs(int u, int &cnt) {
+  cnt += 1;
+  visited[u] = true;
+  for(auto x : adj[u]) {
+    if(!visited[x]) {
+      dfs(x, cnt);
+    }
+  }
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  int n, m;
+  cin >> n >> m;
+  memset(visited, false, sizeof(visited));
+  for(int i = 0; i < m; ++i) {
+    int x, y;
+    cin >> x >> y;
+    adj[x].push_back(y);
+    adj[y].push_back(x);
+  }
+  int ans = 0, cnt;
+  for(int i = 1; i <= n; ++i) {
+    if(!visited[i]) {
+      cnt = 0;
+      dfs(i, cnt);
+      ans = max(ans, cnt);
+    }
+  }
+  cout << ans << '\n';
+  return 0;
+}
