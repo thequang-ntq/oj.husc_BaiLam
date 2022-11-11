@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define F first
+#define S second
+typedef long long ll;
+typedef long double lf;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+const lf PI = acos(-1);
+const string FNAME = "S";
+
+int main(int argc, wchar_t** argv, wchar_t** envp) {
+	ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+//	freopen((FNAME + ".INP").c_str(), "r", stdin);
+//	freopen((FNAME + ".OUT").c_str(), "w", stdout);
+	ll n, m;	cin >> n >> m;
+	vector<ll> edges[n];
+	vector<bool> del(n, false);
+	while(m --){
+		ll x, y;	cin >> x >> y;
+		x --, y --;
+		edges[x].push_back(y);
+		edges[y].push_back(x);
+	}
+	for(ll i = 0; i < n; i ++){
+		ll x = 0, cnt = 0;
+		if(i)
+			cin >> x;
+		x --;
+		if(x >= 0)
+			del[x] = true;
+		vector<bool> visited(n, false);
+		for(ll j = 0; j < n; j ++)
+			if(!visited[j] && !del[j]){
+				queue<ll> Queue;
+				Queue.push(j);
+				while (Queue.size()) {
+					ll cur = Queue.front();
+					Queue.pop();
+					if (!visited[cur]) {
+						cnt ++;
+						visited[cur] = true;
+						for (ll next: edges[cur]) {
+							if (!del[next]) {
+								Queue.push(next);
+							}
+						}
+					}
+				}
+				break;
+			}
+		cout << (cnt == n - i ? "YES" : "NO") << '\n';
+	}
+	return EXIT_SUCCESS;
+}
