@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+#define taskname "AB"
+using namespace std;
+
+typedef array<int, 3> Edge;
+int t;
+
+class MST {
+protected:
+	int sz;
+	vector<int> rk, par;
+	vector<Edge> E;
+
+public:
+	MST(int _sz, const vector<Edge> &e) {
+		this->sz = _sz;
+		rk.assign(_sz + 1, 1);
+		par.resize(_sz + 1);
+		for (int i = 1; i <= _sz; i++) par[i] = i;
+		E = e;
+	}
+	int find(int u) {
+		return u == par[u] ? u : par[u] = find(par[u]);
+	}
+	bool join(int u, int v) {
+		u = find(u); v = find(v);
+		if (u == v) return false;
+		if (rk[u] < rk[v]) swap(u, v);
+		rk[u] += rk[v];
+		par[v] = u;
+		return true;
+	}
+	int get() {
+		int ans = 0;
+		for (auto &e: E)
+			if (join(e[0], e[1])) 
+				ans += e[2];
+		return ans;
+	}
+};
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+	cin >> t;
+}
+
+void Solve(){
+	int n; cin >> n;
+	vector<Edge> E;
+	
+	int u, v, c;
+	while (cin >> u >> v >> c) {
+		if (u == 0 && v == 0 && c == 0) break;
+		E.push_back({u, v, c});
+	}
+
+	sort(E.begin(), E.end(), [](const Edge &a, const Edge &b){ return a[2] < b[2]; });
+	MST mstMin(n, E);
+
+	sort(E.begin(), E.end(), [](const Edge &a, const Edge &b){ return a[2] > b[2]; });
+	MST mstMax(n, E);
+
+	int ans = mstMin.get() + mstMax.get();
+	if (ans % 2) cout << ans << "/2\n";
+	else cout << ans / 2 << "\n";  
+}
+
+int main(){
+	Input();
+	for (int i = 1; i <= t; i++) {
+		cout << "Case #" << i << ": "; 
+		Solve(); 
+	}
+	return 0;
+}
