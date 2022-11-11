@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+#define taskname "G"
+using namespace std;
+
+const int inf = 1e8;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	int n, m; cin >> n >> m;
+	vector<array<int, 3>> E;
+	vector<vector<int>> f(n + 1, vector<int>(n + 1, inf)); 
+	for (int i = 1; i <= n; i++) f[i][i] = 0;
+
+	for (int i = 1; i <= m; i++) {
+		int u, v, c; cin >> u >> v >> c;
+		f[u][v] = f[v][u] = min(f[u][v], c);
+		E.push_back({u, v, c});
+	}
+
+	for (int k = 1; k <= n; k++)
+		for (int i = 1; i <= n; i++)
+			for (int j = 1; j <= n; j++)
+				f[i][j] = min(f[i][j], f[i][k] + f[k][j]);
+	
+	// for (int i = 1; i <= n; i++)
+	// 	for (int j = 1; j <= n; j++)
+	// 		if (f[i][j] == inf) cout << "inf" << " \n"[j == n];
+	// 		else cout << f[i][j] << " \n"[j == n];
+
+	auto check = [&](const array<int, 3> &e){
+		for (int i = 1; i <= n; i++)
+			for (int j = 1; j <= n; j++) {
+				if (f[i][j] == inf) continue;
+				if (f[i][j] == f[i][e[0]] + f[e[1]][j] + e[2]) return true;
+				if (f[i][j] == f[i][e[1]] + f[e[0]][j] + e[2]) return true;
+			}
+		return false;
+	};
+
+	int ans = 0;
+	for (auto &e: E) ans += check(e);
+
+	cout << E.size() - ans;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
