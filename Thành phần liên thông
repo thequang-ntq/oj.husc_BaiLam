@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+#define taskname "J"
+using namespace std;
+
+const int N = 2e5+10;
+
+int n, k, l;
+vector<int> adj[N];
+bool visited[N];
+int ans[N], id[N];
+int cntConnect = 0;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+void dfs(int u, vector<int> &group) {
+	visited[u] = true;
+	group.push_back(u);
+	for (int v: adj[u]) 
+		if (!visited[v]) dfs(v, group);
+}
+void Solve(){
+	cin >> n >> k >> l;
+	for (int i = 1, u, v; i <= k; i++) {
+		cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+
+	for (int i = 1; i <= n; i++)
+		if (!visited[i]) {
+			vector<int> group;
+			dfs(i, group);
+			cntConnect++;
+			for (int u: group) id[u] = cntConnect;
+		}
+
+	for (int i = 1; i <= n; i++) adj[i].clear();
+
+	for (int i = 1, u, v; i <= l; i++){
+		cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+
+	memset(visited, false, sizeof(visited));
+	for (int i = 1; i <= n; i++) {
+		if (!visited[i]) {
+			vector<int> group;
+			dfs(i, group);
+
+			map<int, int> d;
+			for (int u: group) d[id[u]]++;
+			for (int u: group) ans[u] = d[id[u]];
+		}
+	}
+
+	for (int i = 1; i <= n; i++) cout << ans[i] << " ";
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
