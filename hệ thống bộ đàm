@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+#define taskname "N"
+using namespace std;
+
+typedef long long ll;
+typedef pair<ll, ll> Point;
+const int N = 1e3+10;
+
+class DSU{
+protected:
+	vector<int> rk, par;
+
+public:
+	DSU(int n) {
+		rk.assign(n + 1, 1);
+		par.assign(n + 1, 0);
+		for (int i = 1; i <= n; i++) 
+			par[i] = i;
+	}
+
+	int find(int u) {
+		return par[u] == u ? u : par[u] = find(par[u]);
+	}
+
+	bool join(int u, int v) {
+		u = find(u); v = find(v);
+		if (u == v) return false;
+		if (rk[u] < rk[v]) swap(u, v);
+		rk[u] += rk[v];
+		par[v] = u;
+		return true;
+	}
+};
+
+int n;
+Point A[N];
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+ll dist(Point a, Point b) {
+	return (a.first - b.first) * (a.first - b.first)
+		+ (a.second - b.second) * (a.second - b.second);
+} 
+bool isConnect(Point a, Point b, ll d) {
+	return dist(a, b) <= d;
+}
+bool f(ll X){
+	DSU dsu(n);
+	int cnt = 0;
+	for (int i = 1; i <= n; i++)
+		for (int j = i + 1; j <= n; j++)
+			cnt += (isConnect(A[i], A[j], X) && dsu.join(i, j));
+	return cnt == n - 1;
+}
+void Solve(){
+	cin >> n;
+	for (int i = 1; i <= n; i++) cin >> A[i].first >> A[i].second;
+	
+	ll l = 0, r = 0;
+	for (int i = 1; i <= n; i++)
+		for (int j = i + 1; j <= n; j++)
+			r = max(r, dist(A[i], A[j]));
+
+	while (l + 1 < r) {
+		ll m = (l + r) >> 1;
+		if (f(m)) r = m;
+		else l = m;
+	}
+	cout << r;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
