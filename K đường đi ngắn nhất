@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define F first
+#define S second
+typedef long long ll;
+typedef long double lf;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+const lf PI = acos(-1);
+const string FNAME = "";
+
+inline vector<ll> kShortestPath(ll n, ll k, vector<vector<pair<ll, ll>>> edges) {
+	edges.insert(begin(edges), vector<pair<ll, ll>>());
+	for(vector<pair<ll, ll>> &vp: edges)
+		for(pair<ll, ll> &p: vp)
+			p.F ++;
+	priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+	vector<vector<ll>> ksp(n + 1, vector<ll>(k, LLONG_MAX));
+	vector<ll> res;
+	pq.push({0, 1});
+	ksp[1][0] = 0;
+	while (pq.size()) {
+		pair<ll, ll> p = pq.top();
+		pq.pop();
+		if (ksp[p.S][k - 1] >= p.F) {
+			vector<pair<ll, ll>> vp = edges[p.S];
+			for (pair<ll, ll> next: edges[p.S]) {
+				if (p.F + next.S < ksp[next.F][k - 1]) {
+					ksp[next.F][k - 1] = p.F + next.S;
+					sort(begin(ksp[next.F]), end(ksp[next.F]));
+					pq.push({p.F + next.S, next.F});
+				}
+			}
+		}
+	}
+	for (ll i = 0; i < k; i ++) {
+		res.push_back(ksp[n][i]);
+	}
+	return res;
+}
+
+int main(int argc, wchar_t** argv, wchar_t** envp) {
+	ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+//	freopen((FNAME + ".INP").c_str(), "r", stdin);
+//	freopen((FNAME + ".OUT").c_str(), "w", stdout);
+	ll n, m, k;	cin >> n >> m >> k;
+	vector<vector<pair<ll, ll>>> edges(n, vector<pair<ll, ll>>());
+	while(m --){
+		ll a, b, c;	cin >> a >> b >> c;
+		edges[a - 1].push_back({b - 1, c});
+	}
+	for(ll x: kShortestPath(n, k, edges))
+		cout << x << ' ';
+	return EXIT_SUCCESS;
+}
