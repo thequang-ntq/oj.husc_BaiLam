@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+const int inf = 1e6 + 10;
+bool visited[inf];
+vector<int> adj[inf];
+
+void dfs(int u) {
+  visited[u] = true;
+  for(auto x : adj[u]) {
+    if(!visited[x]) {
+      dfs(x);
+    }
+  }
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  int n, m;
+  cin >> n >> m;
+  memset(visited, false, sizeof(visited));
+  for(int i = 0; i < m; ++i) {
+    int x, y;
+    cin >> x >> y;
+    adj[x].push_back(y);
+    adj[y].push_back(x);
+  }
+  int ans = 0;
+  for(int i = 1; i <= n; ++i) {
+    if(!visited[i]) {
+      dfs(i);
+      ans = ans + 1;
+    }
+  }
+  if(ans == 1) {
+    cout << "Graph is connected" << '\n';
+  }
+  else {
+    cout << "Graph is not connected with " << ans << " connected components" << '\n';
+  }
+  return 0;
+}
