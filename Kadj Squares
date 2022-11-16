@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+#define F first
+#define S second
+typedef long long ll;
+typedef long double lf;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+const lf PI = acos(-1);
+const string FNAME = "";
+
+int main(int argc, wchar_t** argv, wchar_t** envp) {
+	ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+//	freopen((FNAME + ".INP").c_str(), "r", stdin);
+//	freopen((FNAME + ".OUT").c_str(), "w", stdout);
+	ll n;
+	while(cin >> n){
+		if(!n)
+			break;
+		vector<pair<pair<lf, lf>, pair<lf, lf>>> lst;
+		ll start = 0;
+		for(ll i = 0; i < n; i ++){
+			ll x;	cin >> x;
+			for(ll j = max(start, x); ; j ++){
+				pair<pair<lf, lf>, pair<lf, lf>> tp = make_pair(make_pair(j - x, x), make_pair(j + x, x));
+				bool ok = true;
+				for(ll k = 0; k < i; k ++){
+					if(lst[k].S.F + lst[k].S.S > tp.F.F + tp.F.S && lst[k].S.F - lst[k].S.S > tp.F.F - tp.F.S){
+						ok = false;
+						break;
+					}
+				}
+				if(ok){
+					lst.push_back(tp);
+					start = j + 1;
+					break;
+				}
+			}
+		}
+		for(ll i = 0; i < n; i ++){
+			bool ok = false;
+			ll sum = 0;
+			map<lf, ll> cnt;
+			for(ll j = 0; j < n; j ++){
+				if(i == j)
+					continue;
+				if(lst[j].F.S > lst[i].F.S)
+					cnt[lst[j].F.F] ++, cnt[lst[j].S.F + 0.5] --;
+			}
+			for(lf j = 0; j < 10005; j += 0.5){
+				sum += cnt[j];
+				if(!sum && j >= lst[i].F.F && j <= lst[i].S.F){
+					ok = true;
+					break;
+				}
+			}
+			if(ok)
+				cout << i + 1 << ' ';
+		}
+		cout << '\n';
+	}
+	return EXIT_SUCCESS;
+}
