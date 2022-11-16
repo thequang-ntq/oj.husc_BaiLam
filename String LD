@@ -1,0 +1,34 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef long long ll;
+
+int main(){
+    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    int n, cnt = 0;
+    while(cin >> n){
+        if(n == 0) break;
+        map <string, int> mp;
+        vector <string> v(n + 5);
+        int ans = 1e9;
+        for( int i = 1; i <= n; i++ ){
+            string s; cin >> s;
+            int res = s.size() - 1;
+            mp[s]++;
+            int cnt = 0;
+            while(!(s.empty())){
+                s.erase(0, 1);
+                if(mp[s]){
+                    ans = min(ans, cnt);
+                    break;
+                }
+                mp[s]++;
+                ++cnt;
+            }
+            ans = min(ans, res);
+        }
+        cout << ans << "\n";
+    }
+    return 0;
+}
