@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+#define taskname "E"
+using namespace std;
+
+typedef long long ll;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	int n; cin >> n;
+	ll X, Y; cin >> X >> Y;
+	ll A[n], B[n];
+	for (int i = 0; i < n; i++) cin >> A[i];
+	for (int i = 0; i < n; i++) cin >> B[i];
+
+	ll F[n + 1][1 << n];
+	bool visited[n + 1][1 << n];
+	for (int i = 0; i <= n; i++)
+		for (int j = 0; j < (1 << n); j++) {
+			F[i][j] = 1e18;
+			visited[i][j] = false;
+		}
+
+	queue<pair<int, int>> Q;
+	for (int i = 0; i < n; i++) {
+		F[1][1 << i] = abs(A[i] - B[0]) * X + i * Y;
+		visited[1][1 << i] = true;
+		Q.push({1, 1 << i});
+	}
+
+	while (!Q.empty()) {
+		int i = Q.front().first;
+		int x = Q.front().second;
+		Q.pop();
+
+		for (int j = 0, cnt = 0; j < n; j++) {
+			if (x & (1 << j)) continue;
+			int v = x | (1 << j); cnt++;
+			F[i+1][v] = min(F[i+1][v], F[i][x] + abs(A[j] - B[i]) * X + ((i + cnt) - (i + 1)) * Y);
+
+			if (!visited[i+1][v]) {
+				Q.push({i+1, v});
+				visited[i+1][v] = true;
+			} 
+		}
+	}
+
+	cout << F[n][(1 << n) - 1];
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
