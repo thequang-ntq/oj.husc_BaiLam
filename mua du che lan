@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+#define taskname "F"
+using namespace std;
+
+typedef long long ll;
+const int N = 5e3+10;
+const int M = 1e5+10;
+
+int n, m;
+ll C[M], X[N], F[N];
+ll ST[4 * M];
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+void Solve(){
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++) cin >> X[i];
+	sort(X+1, X+n+1);
+	for (int i = 1; i <= m; i++) cin >> C[i];
+	for (int i = m - 1; i >= 1; i--) C[i] = min(C[i], C[i + 1]);
+
+	for (int i = 1; i <= n; i++) {
+		F[i] = 1e18;
+		for (int j = i; j >= 1; j--) 
+			F[i] = min(F[i], F[j-1] + C[X[i] - X[j] + 1]);
+	}
+
+	cout << F[n];
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
