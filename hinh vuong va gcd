@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+#define taskname "C"
+using namespace std;
+
+const int N = 2e5+10;
+
+struct SegTree{
+	vector<int> ST;
+
+	SegTree(int sz) {
+		ST.assign(4 * sz, 0);
+	}
+
+	void update(int id, int l, int r, int pos, int val) {
+		if (l == r) return void(ST[id] = val);
+		int m = (l + r) >> 1;
+		if (pos <= m) update(id<<1, l, m, pos, val);
+		else update(id<<1|1, m+1, r, pos, val);
+		ST[id] = __gcd(ST[id<<1], ST[id<<1|1]);
+	}
+	int get(int id, int l, int r, int u, int v) {
+		if (r < u || v < l) return 0;
+		if (u <= l && r <= v) return ST[id];
+		int m = (l + r) >> 1;
+		return __gcd(get(id<<1, l, m, u, v), get(id<<1|1, m+1, r, u, v));
+	}
+};
+
+int n, q;
+int A[N], B[N];
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	cin >> n >> q;
+	SegTree STA(n + 1), STB(n + 1);
+	for (int i = 1; i <= n; i++) {
+		cin >> A[i];
+		if (i > 1) STA.update(1, 2, n, i, abs(A[i] - A[i-1]));
+	}
+	for (int i = 1; i <= n; i++) {
+		cin >> B[i];
+		if (i > 1) STB.update(1, 2, n, i, abs(B[i] - B[i-1]));
+	}
+
+	while (q--) {
+		int h1, h2, w1, w2; cin >> h1 >> h2 >> w1 >> w2;
+		int gcdA = 0, gcdB = 0;
+		if (h1 < h2) gcdA = STA.get(1, 2, n, h1 + 1, h2);
+		if (w1 < w2) gcdB = STB.get(1, 2, n, w1 + 1, w2);
+		cout << __gcd(__gcd(gcdA, gcdB), A[h1] + B[w1]) << "\n";
+	}
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
