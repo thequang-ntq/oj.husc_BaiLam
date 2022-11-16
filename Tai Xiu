@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+
+#define ll long long
+using namespace std;
+ll f[5001][5001];
+int n,m;
+ll coin[5001];
+int c[5001];
+void input() {
+    cin>>n>>m;
+    for ( int i=1;i<=n;i++) cin>>coin[i];
+    for ( int i=1;i<=m;i++) {
+        ll x,y; cin>>x>>y;
+        c[x]=y;
+    }
+}
+void solve() {
+    for ( int i=1;i<=n;i++) {
+        for ( int j=0;j<=i-1;j++) {
+            f[i][0]=max(f[i][0],f[i-1][j]);
+        }
+        for ( int j=1;j<=i;j++) {
+            f[i][j]=f[i-1][j-1]+coin[i]+c[j];
+        }
+    }
+    ll Max=0;
+    for ( int i=0;i<=n;i++) {
+        Max=max(Max,f[n][i]);
+    }
+    cout<<Max;
+}
+int main() {
+    input();
+    solve();
+    return 0;
+}
