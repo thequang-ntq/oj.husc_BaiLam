@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+int n;
+struct DSU{
+    vector <ll> par, sz;
+
+    void make_set(){
+        par.resize(n + 5, 0);
+        sz.resize(n + 5, 0);
+        for( int i = 1; i <= n; i++ ){
+            par[i] = i;
+            sz[i] = 1;
+        }
+    }
+    int find(int u){
+        if(u == par[u]) return u;
+        return par[u] = find(par[u]);
+    }
+
+    bool Union(int a, int b){
+        a = find(a);
+        b = find(b);
+        if(a == b) return false;
+        if(sz[a] < sz[b]) swap(a, b);
+        par[b] = a;
+        sz[a] += sz[b];
+        return true;
+    }
+}dsu;
+
+struct Edge{
+    int u, v, w;
+    Edge(int _u, int _v, int _w) : u(_u), v(_v), w(_w) {};
+};
+void Solve(){
+    cin >> n;
+    vector <Edge> edges;
+    for( int i = 1; i < n; i++ ){
+        int u, v, w; cin >> u >> v >> w;
+        edges.push_back({u, v, w});
+    }
+    dsu.make_set();
+    sort(edges.begin(), edges.end(), [](Edge &a, Edge &b){
+        return a.w < b.w; 
+    });
+    ll ans = 0;
+    for(auto e : edges){
+        int x = dsu.find(e.u);
+        int y = dsu.find(e.v);
+        ans += ll(e.w * dsu.sz[x] * dsu.sz[y]);
+        dsu.Union(x, y);
+    }
+    cout << ans;
+}
+int main(){
+  ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+  int cas = 1; 
+  //cin >> cas;
+  while(cas--) Solve();
+  return 0;
+}
