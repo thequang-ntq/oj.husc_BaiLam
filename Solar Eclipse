@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+struct point
+{
+	double x, y;
+	point() {}
+	point(double a, double b)
+	{
+		x = a, y = b;
+	}
+	double dist(point a)
+	{
+		return hypot(x - a.x, y - a.y);
+	}
+};
+
+int main()
+{
+	ios_base :: sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	#ifndef  ONLINE_JUDGE
+	freopen("test.inp", "r", stdin);
+	freopen("test.out", "w", stdout);
+	#endif
+	int n;
+	while (cin >> n)
+	{
+		if (n == 0)
+			return 0;
+		double eps = 1e-9;
+		double R;
+		cin >> R;
+		vector <point> p(n);
+		for (int i = 0; i < n; ++i)
+			cin >> p[i].x >> p[i].y;
+		double ans = 1e9;
+		point M = point(0, 0);
+		bool status = true;
+		for (int i = 0; i < n && status == true; ++i)
+			if (p[i].dist(M) != 0)
+				status = false;
+		if (status == true)
+		{
+			cout << fixed << setprecision(6) << R * 2 << endl;
+			continue;
+		}
+		status = true;
+		for (int i = 0; i < n && status == true; ++i)
+			if (abs(p[i].dist(M) - R * 2) > eps && p[i].dist(M) < R * 2)
+				status = false;
+		if (status == true)
+		{
+			cout << fixed << setprecision(6) << 0.0 << endl;
+			continue;
+		}
+		for (int i = 0; i < n; ++i)
+			if (p[i].dist(M) < R * 2)
+			{
+				double d0 = p[i].dist(M);
+				double d1 = R * 2 - d0;
+				double f = - d1 / d0;
+				point A = point(p[i].x * f, p[i].y * f);
+				status = true;
+				for (int j = 0; j < n && status == true; ++j)
+					if (abs(A.dist(p[j]) - R * 2) > eps && A.dist(p[j]) < R * 2)
+						status = false;
+				if (status == true)
+					ans = min(ans, A.dist(M));
+			}
+		R *= 2;
+//		cout << fixed << setprecision(7) << ans;
+		for (int i = 0; i < n - 1; ++i)
+			for (int j = i + 1; j < n; ++j)
+				if (p[i].dist(p[j]) > 0 && p[i].dist(p[j]) <= R * 2)
+				{
+					double d = p[i].dist(p[j]);
+					double l = d / 2;
+					double h = sqrt(R * R - l * l);
+					double x0 = l / d * (p[j].x - p[i].x) + h / d * (p[j].y - p[i].y) + p[i].x;
+					double y0 = l / d * (p[j].y - p[i].y) - h / d * (p[j].x - p[i].x) + p[i].y;
+					double x1 = l / d * (p[j].x - p[i].x) - h / d * (p[j].y - p[i].y) + p[i].x;
+					double y1 = l / d * (p[j].y - p[i].y) + h / d * (p[j].x - p[i].x) + p[i].y;
+					point A = point(x0, y0), B = point(x1, y1);
+					status = true;
+					for (int k = 0; k < n && status == true; ++k)
+						if (abs(A.dist(p[k]) - R) > eps && A.dist(p[k]) < R)
+							status = false;
+					if (status == true)
+						ans = min(ans, A.dist(M));
+					status = true;
+					for (int k = 0; k < n && status == true; ++k)
+						if (abs(B.dist(p[k]) - R) > eps && B.dist(p[k]) < R)
+							status = false;
+					if (status == true)
+						ans = min(ans, B.dist(M));
+//					cout << A.x << " " << A.y << endl << B.x << " " << B.y;	
+				}
+		cout << fixed << setprecision(6) << ans << endl;
+	}
+}
