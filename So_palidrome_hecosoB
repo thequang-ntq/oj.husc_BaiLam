@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+
+bool check10(ll n) {
+    ll m=n;
+    ll ans=0;
+    while (n>0) {
+        ans=ans*10+ (n%10);
+        n/=10;
+    }
+    return m==ans;
+}
+bool check2(ll n) {
+     string s=bitset<32> (n).to_string();
+     int vt1,vt2;
+     for (int  i=31;i>=0;i--) {
+        if (s[i]=='1') {
+            vt1=i;
+            break;
+        }
+     }
+     for (int  i=0;i<=31;i++) {
+        if (s[i]=='1') {
+            vt2=i;
+            break;
+        }
+     }
+     
+     
+    while (vt2<vt1) {
+        if (s[vt1]!=s[vt2]) return false;
+        vt1--;
+        vt2++;
+    }
+    return true;
+}
+int main()  {
+    int t;cin>>t;
+    while (t--) {
+        ll n;cin>>n;
+        if (check10(n) && check2(n)) cout<<"Yes";
+        else cout<<"No";
+        
+        cout<<endl;
+    }
+}
