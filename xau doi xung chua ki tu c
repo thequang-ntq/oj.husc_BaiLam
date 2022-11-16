@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+#define taskname "C"
+using namespace std;
+
+int t;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+	cin >> t;
+}
+void Solve(){
+	char c; cin >> c;
+	string s; cin >> s;
+	int n = s.size();
+	string t = s;
+	reverse(t.begin(), t.end());
+	t = ' ' + t;
+	s = ' ' + s;
+
+	int F[n+1][n+1][2];
+	memset(F, 0, sizeof(F));
+
+	for (int i = 1; i <= n; i++)
+		for (int j = 1; j <= n; j++) {
+			if (s[i] == t[j]) {
+				if (s[i] == c) {
+					F[i][j][1] = max(F[i-1][j-1][1], F[i-1][j-1][0]) + 1;
+					F[i][j][0] = max(F[i-1][j][0], F[i][j-1][0]);
+				}
+				else {
+					F[i][j][0] = F[i-1][j-1][0] + 1;
+					F[i][j][1] = max(F[i][j-1][1], F[i-1][j][1]);
+
+					if (F[i-1][j-1][1] > 0) F[i][j][1] = F[i-1][j-1][1] + 1;
+				}
+			}
+			else {
+				F[i][j][1] = max(F[i][j-1][1], F[i-1][j][1]);
+				F[i][j][0] = max(F[i][j-1][0], F[i-1][j][0]);
+			}
+		}
+
+	cout << F[n][n][1] << "\n";
+}
+
+int main(){
+	Input();
+	while (t--) Solve();
+	return 0;
+}
