@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+struct point
+{
+	int x, y;
+	int ccw(point a, point b)
+	{
+		int c = x * (a.y - b.y) + a.x * (b.y - y) + b.x * (y - a.y);
+		if (c == 0)
+			return 0;
+		if (c > 0)
+			return 1;
+		return - 1;
+	}
+	double dist(point a)
+	{
+		return hypot(x - a.x, y - a.y);
+	}
+	double area(point a, point b)
+	{
+		return abs((a.x - x) * (b.y - y) - (a.y - y) * (b.x - x));
+	}
+	double dist_to_Line(point a, point b)
+	{
+		double AC = (*this).dist(a);
+		double BC = (*this).dist(b);
+		if ((*this).ccw(a, b) == 0)
+			return min(AC, BC);
+		double AB = a.dist(b);
+		if (AB * AB + BC * BC < AC * AC)
+			return BC;
+		else if (AB * AB + AC * AC < BC * BC)
+			return AC;
+		return (*this).area(a, b) / AB;
+	}
+};
+
+int main()
+{
+	ios_base :: sync_with_stdio(false); cin.tie(0); cout.tie(0);
+	#ifndef  ONLINE_JUDGE
+	freopen("test.inp", "r", stdin);
+	freopen("test.out", "w", stdout);
+	#endif
+	int n;
+	cin >> n;
+	vector <point> pts(n);
+	for (int i = 0; i < n; ++i)
+		cin >> pts[i].x >> pts[i].y;
+	int m;
+	cin >> m;
+	vector <point> p(m);
+	for (int i = 0; i < m; ++i)
+		cin >> p[i].x >> p[i].y;
+	double minn = 1e18;
+	for (int i = 0; i < n; ++i)
+		for (int j = 0; j < m; ++j)
+		{
+			int nxt_j = (j + 1) % m;
+			
+			minn = min(minn, pts[i].dist_to_Line(p[j], p[nxt_j]));
+		}
+	cout << fixed << setprecision(2) << minn / 2.0;
+}
