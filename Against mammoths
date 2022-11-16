@@ -1,0 +1,86 @@
+#include <bits/stdc++.h>
+#define taskname "C"
+#define init first
+#define rate second
+using namespace std;
+
+typedef pair<int64_t, int64_t> ii;
+const int N = 260;
+
+int H, A;
+int assigned[N];
+vector<int> adj[N];
+int64_t years[N][N];
+ii humans[N], aliens[N];
+int visited[N], timeDFS;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+bool find(int u){
+	if (visited[u] == timeDFS) return false;
+	visited[u] = timeDFS;
+
+	for (int v: adj[u])
+		if (!assigned[v] || (assigned[v] != u && find(assigned[v]))){
+			assigned[v] = u;
+			return true;
+		}
+	return false;
+}
+bool f(int64_t _time){
+	// Clear variable
+	memset(assigned, 0, sizeof assigned);
+	for (int i = 1; i <= H; i++) adj[i].clear();
+
+	// Generation graph
+	for (int i = 1; i <= H; i++)
+		for (int j = 1; j <= A; j++){
+			if (_time - years[i][j] < 0) continue;
+			int64_t spaceShip = humans[i].init + humans[i].rate * (_time - years[i][j]);
+			int64_t mammoth = aliens[j].init + aliens[j].rate * _time;
+			if (spaceShip >= mammoth) adj[i].push_back(j);
+		}
+	
+	// Count Assigned Edge
+	int countAssign = 0;
+	for (int i = 1; i <= H; i++){
+		timeDFS++;
+		countAssign += find(i);
+	}
+
+	return countAssign == A;
+}
+void Solve(){
+	// Input data
+	cin >> H >> A;
+	if (H == 0 && A == 0) exit(0);
+
+	for (int i = 1; i <= H; i++) cin >> humans[i].init >> humans[i].rate;
+	for (int i = 1; i <= A; i++) cin >> aliens[i].init >> aliens[i].rate;
+	for (int i = 1; i <= H; i++)
+		for (int j = 1; j <= A; j++)
+			cin >> years[i][j];
+	
+	bool findAns = false;
+	int64_t l = -1, r = 1e9;
+	while (l + 1 < r){
+		int64_t m = (l + r) >> 1;
+		if (f(m)) r = m, findAns = true;
+		else l = m;
+	}
+
+	if (findAns) cout << r << "\n";
+	else cout << "IMPOSSIBLE\n";
+}
+
+int main(){
+	Input();
+	while (1) Solve();
+	return 0;
+}
