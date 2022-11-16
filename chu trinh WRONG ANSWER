@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+#define taskname "B"
+using namespace std;
+
+typedef long long ll;
+const ll mod = 1e9+7;
+const int N = 60;
+
+int n, k;
+ll C[N][N], fact[N];
+ll f[N], X[N];
+ll ans = 0;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+void updateAns(){
+	int cnt = n;
+	ll tmp = 1;
+	for (int i = 1; i <= k; i++) {
+		tmp = tmp * (C[cnt][X[i]] * f[X[i]] % mod) % mod;
+		cnt -= X[i];
+	}
+	ans = (ans + tmp) % mod;
+}
+void backtrack(int j, int sum){
+	for (int i = 1; i <= n; i++) {
+		if (sum + i > n || X[j-1] > i) continue;
+		X[j] = i;
+
+		if (j == k) {
+			if (sum + i == n) updateAns();
+		}
+		else backtrack(j + 1, sum + i);
+	}
+}
+ll power(ll b, ll e, ll m) {
+	ll ans = 1;
+	for (; e > 0; e >>= 1, b = (b * b) % m)
+		if (e & 1) ans = (ans * b) % m;
+	return ans;
+}
+ll divMod(ll a, ll b, ll m) {
+	return (a % mod) * power(b, m - 2, m) % m;
+}
+void Solve(){
+	cin >> n >> k;
+
+	for (int i = 0; i <= 50; i++) {
+		C[i][0] = C[i][i] = 1;
+		for (int j = 1; j < i; j++) 
+			C[i][j] = (C[i-1][j] + C[i-1][j-1]) % mod;
+	}	
+
+	fact[0] = 1;
+	for (int i = 1; i <= 50; i++)
+		fact[i] = (fact[i-1] * i) % mod;	
+
+	f[1] = 1;
+	for (int i = 2; i <= n; i++)
+		for (int j = 0; j <= i; j++) {
+			ll t = C[i][j] * fact[i - j] % mod;
+			if (j % 2 == 0) f[i] = (f[i] + t) % mod;
+			else f[i] = (f[i] - t + mod) % mod;
+		}
+
+	backtrack(1, 0);
+	cout << divMod(ans, 2, mod);
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
