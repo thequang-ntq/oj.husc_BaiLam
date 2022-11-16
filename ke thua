@@ -1,0 +1,64 @@
+#include <bits/stdc++.h>
+#define taskname "D"
+#define umap unordered_map 
+using namespace std;
+
+umap<string, vector<string>> adj;
+umap<string, long double> f;
+umap<string, bool> visited;
+vector<string> topoPath, node;
+string s;
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+void dfs(string u){
+	visited[u] = true;
+	for (string &v: adj[u]) {
+		if (visited[v]) continue;
+		dfs(v);
+	}
+	topoPath.push_back(u);
+}
+void Solve(){
+	int n, k; cin >> n >> k;
+	cin >> s;
+	for (int i = 1; i <= n; i++) {
+		string child, father, mother;
+		cin >> child >> father >> mother;
+		adj[father].push_back(child);
+		adj[mother].push_back(child);
+		node.push_back(child);
+		node.push_back(mother);
+		node.push_back(father);
+	}
+
+	f[s] = 1;
+	for (auto &u: node) 
+		if (!visited[u]) 
+			dfs(u);
+	
+	reverse(topoPath.begin(), topoPath.end());
+	for (auto &u: topoPath)
+		for (auto &v: adj[u])
+			f[v] += f[u] / 2; 
+	
+	string ans; cin >> ans;
+	for (int i = 1; i < k; i++) {
+		string tmp; cin >> tmp;
+		if (f[tmp] > f[ans]) ans = tmp;
+	}
+
+	cout << ans;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
