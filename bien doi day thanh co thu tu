@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+const int N=500000;
+int longistsub (vector<int> a) {
+    vector<int> f;
+    int m=a.size();
+    for (int i=0;i<m;i++) {
+        int pos=lower_bound (f.begin(),f.end(),a[i])-f.begin();
+        if (pos==f.size()) f.push_back(a[i]);
+        else f[pos]=a[i];
+    }
+    return f.size();
+
+}
+
+
+int main() {
+    int n;cin>>n;
+    vector<int> a(N),b(N);
+    for (int i=0;i<n;i++) cin>>a[i];
+    int x=longistsub(a);
+    for (int i=0;i<n;i++) {
+        b[i]=a[n-1-i];
+    }
+    int y=longistsub(b);
+    cout<<n-max(x,y);
+    return 0;
+}
