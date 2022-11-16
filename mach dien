@@ -1,0 +1,99 @@
+#include <bits/stdc++.h>
+#define taskname "E"
+#define x first
+#define y second
+using namespace std;
+
+typedef pair<int, int> Point;
+const Point mov[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+const int N = 110;
+
+int n, m;
+
+class Elec{
+private:
+	bool visited[N][N];
+	Point trace[N][N];
+
+public:
+	Elec() {}
+	
+	bool isInside(Point pos) {
+		return 0 <= pos.x && pos.x <= n 
+			&& 0 <= pos.y && pos.y <= m; 
+	}
+
+	vector<Point> bfs(Point s, Point f) {
+		queue<Point> Q;
+		visited[s.x][s.y] = true;
+		Q.push(s);
+
+		while (Q.size()) {
+			Point u = Q.front(); Q.pop();
+
+			for (auto e: mov) {
+				Point v = {u.x + e.x, u.y + e.y};
+				if (!isInside(v) || visited[v.x][v.y]) continue;
+
+				trace[v.x][v.y] = u;
+				visited[v.x][v.y] = true;
+				Q.push(v);
+			}
+		}
+
+		vector<Point> path;
+		if (visited[f.x][f.y]) {
+			path.push_back(f);
+			while (s != f) {
+				f = trace[f.x][f.y];
+				path.push_back(f);
+			}
+		}
+
+		return path;
+	}
+
+	int get(pair<Point, Point> A, pair<Point, Point> B) {
+		memset(visited, false, sizeof(visited));
+		visited[B.first.x][B.first.y] = true;
+		visited[B.second.x][B.second.y] = true;
+		vector<Point> path = bfs(A.first, A.second);
+		int ans = path.size() - 1;
+
+		memset(visited, false, sizeof(visited));
+		for (auto &i: path) visited[i.x][i.y] = true;
+
+		path = bfs(B.first, B.second);
+		if (path.size() == 0) return 1e9;
+		else return ans + path.size() - 1;
+	}
+};
+
+void Input(){
+	ios_base::sync_with_stdio(false);
+	cin.tie(0); cout.tie(0);
+	if(fopen(taskname".inp", "r")){
+		freopen(taskname".inp", "r", stdin);
+		freopen(taskname".out", "w", stdout);
+	}
+}
+
+void Solve(){
+	cin >> n >> m;
+	Point A1, A2, B1, B2;
+	cin >> A1.x >> A1.y;
+	cin >> A2.x >> A2.y;
+	cin >> B1.x >> B1.y;
+	cin >> B2.x >> B2.y;
+
+	Elec E1, E2;
+	int ans = min(E1.get({A1, A2}, {B1, B2}), E2.get({B1, B2}, {A1, A2}));
+	if (ans >= 1e9) cout << "IMPOSSIBLE";
+	else cout << ans;
+}
+
+int main(){
+	Input();
+	Solve();
+	return 0;
+}
