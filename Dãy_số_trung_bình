@@ -1,0 +1,136 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000007
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define taskname "__Quang__"
+#define double long double
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+const double Pi = 3.1415926535897323846;
+const double eps = 1e-9;
+int sign(double x){
+	if(x > eps) return 1;
+	if(x < -eps) return -1;
+	return 0;
+}
+long long __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+struct pos{
+	int st;
+	int en;
+	ll length;
+};
+bool cmp(pos a, pos b){
+	return a.length > b.length;
+}
+pair<ll,int> b[1500000];
+priority_queue<ll>q;
+int a[1500000];
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	int n, k;
+  	scanf("%d %d", &n, &k);  
+  	for (int i = 1; i <= n; ++i) {
+   		scanf("%d", &a[i]);
+//   		cout<<a[i]<<" ";
+    	a[i] -= k;
+  	}
+  	for (int i = 1; i <= n; ++i) {    
+    	b[i].first = b[i - 1].first + a[i];
+    	b[i].second = i;
+//    	cout<<b[i].first<<'\n';
+//    	cout<<b[i].second<<'\n';
+  	}
+	sort(b, b + n + 1);
+//	for(int i =0; i<=n; i++) cout<<b[i].first<<" "<<b[i].second<<'\n';
+ 	int it = n - 1, ans = 0;
+ 	int lo,hi;
+ 	vector<pos>op;
+  	while (it >= 0) {
+    	q.push(b[it + 1].second);
+    	int idx = q.top();
+		op.push_back({b[it].second, idx, ans});
+    	if (idx > b[it].second && idx - b[it].second > ans){
+      		ans = idx - b[it].second;
+      	}
+//      	if(it==0) op.push_back({b[it].second, idx, ans});
+//    	cout<<idx<<" ";
+//    	cout<<b[it].second<<" ";
+//    	cout<<ans<<'\n';
+		--it;
+  	}
+  	ll mx = ans;
+  	sort(begin(op), end(op), cmp);
+  	ll ps_max = 0;
+  	ll st_min = 1e9 ;
+  	for(int i=0; i< op.size(); i++){
+  		if(op[i].length==mx){
+  			if(ps_max < abs (op[i].en - op[i].st) ){
+  				ps_max = abs(op[i].en - op[i].st);
+  				
+			}
+			if(st_min > min(op[i].st, op[i].en)){
+				st_min = min( op[i].st, op[i].en);
+			}
+		}	
+	}
+	for(int i=0; i< op.size(); i++){
+		if(ps_max == abs(op[i].en - op[i].st) && st_min == min(op[i].st, op[i].en) && op[i].length ==mx){
+			lo = op[i].st;
+			hi = op[i].en;
+			break;
+		}
+	}
+  	cout<<ans<<'\n';
+  	if(lo > hi) swap(lo,hi);
+  	cout<<lo<<" "<<hi<<'\n';
+//	ll n, ave;
+//	cin>>n>>ave;
+//	for(int i=1; i<=n; ++i){
+//		cin>>a[i];
+//		a[i] -= ave;
+//	}
+//	memset(pref , 0, sizeof(pref));
+//	pref[0] = 0;
+//	vector<pos>p;
+//	for(int i =1; i<=n; i++){
+//		pref[i] = pref[i-1] + a[i];
+////		cout<<pref[i] <<" ";
+//	}
+//	ll mn =0;
+//	p.push_back({1,1,0});
+//	for(int i = n; i>0; i--){
+//		for(int j =i; j>0; j--){
+////			cout<<pref[i] - pref[j]<<'\n';
+//			if(pref[i] - pref[j] > 0){
+//				mn = MAX(mn, i - j);
+////				cout<<j<<" "<<i <<'\n';
+//			}
+//		}
+//	}
+//	for(int i = n; i>0; i--){
+//		for(int j =i; j>0; j--){
+//			if(i - j  == mn && pref[i] - pref[j] > 0){
+//				cout<<i-j + 1<<'\n';
+//				cout<<j<<" "<<i<<'\n';
+//				return 0;
+//			}
+//		}
+//	}
+//	cout<<p[0].length + 1<<'\n';
+//	cout<< p[0].st <<" "<<p[0].en;
+	return 0;
+}
