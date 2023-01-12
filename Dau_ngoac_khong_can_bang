@@ -1,0 +1,57 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000000
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define double long double
+
+#define taskname "__Quang__"
+
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+ll __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	string s; cin>>s;
+	stack<char>ck;
+	ll cnt =0;
+	ll op =0;
+	// mo ngoac thi tang, dong ngoac thi giam
+	// neu gap '(' thi neu op duong thi tang, neu khong thi doi dau va tang them cac phep doi dau ngoac o dau
+	// neu gap ')' thi op giam, cuoi cung lay tri tuyet doi op/2
+	for(int i=0; i< s.size(); i++){
+		if(s[i]==')'){
+			op--;
+		}
+		else{
+			if(op < 0){
+				op = - op;
+				cnt += op/2;
+				if(op % 2 !=0){
+					op =2;
+					cnt++;
+				}
+				else op =1;
+			}
+			else op++;
+		}
+	}
+	if(op < 0) op = -op;
+	if(op % 2 !=0) op++;
+	cnt += op/2;
+	cout<<cnt ;
+	return 0;
+}
