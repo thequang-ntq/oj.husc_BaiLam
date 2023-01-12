@@ -1,0 +1,77 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 9929
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define double long double
+
+#define taskname "__Quang__"
+
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+//ll __lcm(int a, int b){
+//	return (a / __gcd(a,b)) * b;
+//}
+//ll fac(ll x){
+//	if(x==0 || x==1 ) return 1;
+//	return ( (x % MOD) * (fac(x-1) % MOD ) ) % MOD;
+//}
+//ll tohop(ll k, ll n){
+//	if(k==0 || k==n) return 1;
+//	if(k==1) return n % MOD;
+//	return ((tohop(k-1, n-1) % MOD) + (tohop(k, n-1) % MOD) )% MOD;
+//}
+//ll chinhhop(ll n , ll k){
+//	return ( ( (fac(n) % MOD) / (fac(n-k) % MOD)) % MOD );
+//}
+bool check(int n, int fac, int pow){
+	int i = fac;
+	while(pow > 0){
+		if( i > n) return true;
+		pow -= n/i;
+		i *= fac;
+	}
+	return false;
+}
+bool solve(int n, int m){
+	for(ll p =2; p * p <= m; p++){
+		int count =0;
+		while( m % p == 0){
+			m /= p; count++;
+		}
+		if(count > 0){
+			if(check(n, p, count)) return false;
+		}
+	}
+	if(m != 1){
+		if(check(n, m, 1)) return false;
+	}
+	return true;
+}
+//ll dp[2010][2010];
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	ll n,m; 
+	ll temp;
+	while(cin>>n>>m){
+		temp = m;
+		if(m != 0 && solve(MAX(n,1), m)){
+			cout<< temp <<" divides "<<n<<"!"<<'\n';
+		}
+		else{
+			cout<< temp << " does not divide "<<n<<"!"<<'\n';
+		}
+	}
+	return 0;
+}
