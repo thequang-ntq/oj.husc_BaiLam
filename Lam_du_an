@@ -1,0 +1,89 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000000
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define double long double
+
+#define taskname "__Quang__"
+
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+ll __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+bool visited[maxn];
+int par[maxn];
+vector<int>adj[maxn];
+int n;
+struct job{
+	int start;
+	int dead;
+	int profit;
+};
+ll res =0;
+ll res2 =0;
+bool cmp(job a, job b){
+	return (a.dead < b.dead);
+}
+bool cmp2(job a, job b){
+	return (a.profit > b.profit);
+}
+vector<job>vec;
+vector<job>vec2;
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	cin>>n;
+	int temp = n;
+	while(n--){
+		int s,d,p; cin>>s>>d>>p;
+		vec.push_back({s,d,p});
+		vec2.push_back({s,d,p});
+	}
+	sort(begin(vec),end(vec), cmp);
+	res+= vec[0].profit;
+//	cout<<res<<'\n';
+//	for(auto it: vec) cout<<it.start<<" "<<it.dead<<" "<< it.profit<< " ";
+	int i =0;
+	for(int j =1; j<temp; j++){
+		if(vec[j].start > vec[i].dead){
+			res+= vec[j].profit;
+//			cout<<res<<" ";
+			i = j;
+		}
+	}
+	sort(begin(vec2), end(vec2), cmp2);
+	i =0;
+//	bool visited[1000][1000];
+	int hi = vec2[0].start;
+	int lo = 0;
+	int l = vec2[0].dead;
+	int h = 1e9;
+//	memset(visited, false, sizeof(visited));
+	res2+= vec2[i].profit;
+	for(int j =1; j<temp; j++){
+		if(vec2[j].dead < vec2[i].start && (vec2[j].start > lo || vec2[j].dead < hi) ){
+			res2+= vec2[j].profit;
+			if(vec2[j].start > lo) lo = vec2[j].start;
+			else if(vec2[j].dead <  hi) hi = vec2[j].dead;
+		}
+		else if(vec2[j].start > vec2[i].dead && (vec2[j].start > l || vec2[j].dead < h)){
+			res2+= vec2[j].profit;
+			if(vec2[j].start > l) l = vec2[j].start;
+			else if(vec2[j].dead <  h) h = vec2[j].dead;	
+		} 
+	}
+	cout<< max(res,res2);
+	return 0;
+}
