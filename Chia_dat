@@ -1,0 +1,172 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 9929
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define taskname "__Quang__"
+#define double long double
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+const double Pi = 3.1415926535897323846;
+const double eps = 1e-9;
+int sign(double x){
+	if(x > eps) return 1;
+	if(x < -eps) return -1;
+	return 0;
+}
+long long __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+struct Point{
+	double x,y;
+	Point(){x=y=0.0;}
+	Point(double x, double y): x(x), y(y){}
+	Point operator + (const Point &a)
+		const{return Point(x + a.x, y + a.y);}
+	Point operator - (const Point &a)
+		const{return Point(x - a.x, y - a.y );}
+	Point operator * (double k)
+		const{return Point(x*k, y*k); }
+	Point operator / (double k)
+		const{return Point(x/k, y/k);}
+	double dot(const Point & other){
+		return x*other.x + y*other.y;
+	}
+	double cross(const Point &other){
+		return x * other.y - y*other.x;
+	}
+	double length() const{
+		return sqrt(x * x + y * y);
+	}
+};
+
+bool intersected(Point A, Point B, Point C, Point D){
+	Point X = B-A;
+	Point Y = D-C;
+	int ABxAC = sign(X.cross(C-A));
+	int ABxAD = sign(X.cross(D-A));
+	int CDxCA = sign(Y.cross(A-C));
+	int CDxCB = sign(Y.cross(B-C));
+	if(ABxAC==0 || ABxAD ==0 || CDxCA ==0 || CDxCB==0){
+		if (ABxAC == 0 && sign((A-C).dot( B - C)) <= 0) return true;
+        if (ABxAD == 0 && sign((A-D).dot(B - D)) <= 0) return true;
+        if (CDxCA == 0 && sign((C-A).dot(D - A)) <= 0) return true;
+        if (CDxCB == 0 && sign((C-B).dot(D - B)) <= 0) return true;
+        return false;
+	}
+	return (ABxAC * ABxAD < 0 && CDxCA * CDxCB < 0);
+}
+struct line{
+	double a,b,c;
+	line(double a =0, double b =0, double c =0): a(a), b(b), c(c){}
+	line(Point A, Point B){
+		a = B.y - A.y;
+		b = A.x - B.x;
+		c = a*A.x + b*A.y;
+	}
+};
+Point giao_diem(line d1, line d2){
+	double det = d1.a * d2.b - d2.a * d1.b;
+	return Point((d2.b*d1.c - d1.b*d2.c) / det, (d1.a*d2.c - d2.a*d1.c) / det);
+}
+bool cmp(Point a, Point b){
+	return a.x < b.x;
+}
+bool cmp2(Point a, Point b){
+	return a.y < b.y;
+}
+vector<Point>vec1, vec2;
+vector<Point>dp;
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	cout<<fixed<<setprecision(4);
+	int t; cin>>t;
+	int n = t;
+	while(t--){
+		double x,y; cin>>x>>y;
+		vec1.push_back({x,y});
+		vec2.push_back({x,y});
+		dp.push_back({x,y});
+	}
+	bool used[5050]; memset(used, false, sizeof(used));
+	sort(begin(vec1), end(vec1), cmp);
+	sort(begin(dp), end(dp), cmp);
+	sort(begin(vec2), end(vec2), cmp2);
+	Point p1(vec1[0].x, vec1[0].y);
+	double ck = vec1[0].y;
+	bool flag= false;
+	Point p2(vec1[vec1.size()-1].x, vec1[vec1.size()-1].y);
+	for(int i =vec1.size()-2; i>=0; i--){
+		if(p2.y == ck || (p2.x == p1.x && p2.y == p1.y ) ){
+			p2.x = vec1[i].x;
+			p2.y = vec1[i].y;
+		}
+		else{
+			flag = true;
+			break;
+		}
+	}
+	if(flag==false){
+		p2.x = vec1[vec1.size()-1].x;
+		p2.y = vec1[vec1.size()-1].y;
+		flag = true;
+	}
+	line d1(p1,p2);
+	flag = false;
+	Point p3(vec2[0].x, vec2[0].y);
+	Point p4(vec2[vec2.size()-1].x, vec2[vec2.size()-1].y);
+	Point check;
+	for(int i= 1; i< vec2.size(); i++){
+		if( (p3.x==p1.x && p3.y == p1.y) || (p3.x==p2.x && p3.y == p2.y ) ){
+			p3.x = vec2[i].x;
+			p3.y = vec2[i].y;
+		}
+		else{
+			flag = true;
+			break;
+		}
+	}
+	if(flag==false){
+		p3.x = vec2[0].x;
+		p3.y = vec2[0].y;
+		flag= true;
+	}
+	flag = false;
+	double uv = p3.x;
+	for(int i = vec2.size()-2; i>=0; i--){
+		if((p4.x == p1.x && p4.y == p1.y) || (p4.x == p2.x && p4.y == p2.y ) || (p4.x  == p3.x && p4.y == p3.y) || (p4.x == uv) ){
+			p4.x = vec2[i].x;
+			p4.y = vec2[i].y;
+		}
+		else{
+			flag =true;
+			break;
+		}
+		
+	}
+	if(flag == false){
+		p4.x = vec2[vec2.size()-1].x;
+		p4.y = vec2[vec2.size()-1].y;
+		flag = true;
+	}
+	flag = false;
+	line d2(p3,p4);
+	Point gd = giao_diem(d1, d2);
+//	cout<<p1.x<<" "<<p1.y<<" "<<p2.x<<" "<<p2.y<<" "<<p3.x << " "<<p3.y << " "<<p4.x << " " << p4.y <<'\n';
+	if(n==3){
+		cout<< (dp[0].x + dp[0].y) /2 * 1.0 <<'\n';
+	}
+	else cout<<gd.x<<'\n';
+	return 0;
+}
