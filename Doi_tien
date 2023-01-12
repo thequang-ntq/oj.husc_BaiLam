@@ -1,0 +1,40 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000000
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define double long double
+
+#define taskname "__Quang__"
+
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+ll __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	int cnt =0;
+	int a,b,c,x; cin>>a>>b>>c>>x;
+	int u = a * 500, v = b * 100, z = c * 50;
+	for(int i =0; i<=a; i++){
+		for(int j =0; j<=b; j++){
+			for(int k =0; k<=c; k++){
+				if(i * 500 + j * 100 + k * 50 == x) cnt++;
+			}
+		}
+	}
+	cout<<cnt;
+	return 0;
+}
