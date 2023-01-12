@@ -1,0 +1,106 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000007
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define taskname "__Quang__"
+#define double long double
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+const double Pi = 3.1415926535897323846;
+const double eps = 1e-9;
+int sign(double x){
+	if(x > eps) return 1;
+	if(x < -eps) return -1;
+	return 0;
+}
+long long __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+struct Pos{
+	int st;
+	int en;
+	ll length;
+};
+struct Ph{
+	ll a;
+	ll b;
+	ll c;
+	ll d;
+};
+vector<pair<ll,ll>>p;
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	ll n; cin>>n;
+	ll check = n*n;
+	ll total = (check * (check+1))/2;
+	total /= n;
+	if(n==1) cout<<"1 1 "<<'\n';
+	else if(n==2){
+		cout<<"1 4 "<<total<<'\n';
+		cout<<"3 2 "<<total<<'\n';
+	}
+	else if(n==3){
+		cout<<"1 5 9 15" <<'\n';
+		cout<<"7 2 6 15" <<'\n';
+		cout<<"4 8 3 15"<<'\n';
+	}
+	else if(n==4){
+		cout<<"1 6 11 16 34" <<'\n';
+		cout<<"13 2 7 12 34" <<'\n';
+		cout<<"9 14 3 8 34" <<'\n';
+		cout<<"5 10 15 4 34" <<'\n';
+	}
+	else if(n==5){
+		cout<<"1 7 13 19 25 65"<<'\n';
+		cout<<"21 2 8 14 20 65"<<'\n';
+		cout<<"16 22 3 9 15 65"<<'\n';
+		cout<<"11 17 23 4 10 65"<<'\n';
+		cout<<"6 12 18 24 5 65"<<'\n';
+	}
+	else{
+		ll last = n +1;
+		ll lo = 1;
+		ll hi = n*n;
+		ll a[n*n+3][n*n+3];
+		ll temp = n;
+		ll nhan = n-2;
+		ll x = n;
+		for(int i =1; i<=n; i++){
+			ll temp = n + 1;
+			last = temp;
+			ll u = i;
+			for(int j = 1; j<=n; j++){
+				if(j < i){
+					if(j==1){
+						cout<< last + x * nhan <<" ";
+						nhan--;
+					}
+					else{
+						cout<< last  + x * (nhan+1) + temp<<" ";
+						last += temp; 
+					}
+				}
+				else{
+					cout<< u <<" ";
+					u += temp;
+					
+				}
+			}
+			cout<<total;
+			cout<<'\n';
+		}
+	}
+	return 0;
+}
