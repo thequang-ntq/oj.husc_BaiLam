@@ -1,0 +1,76 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000000
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define double long double
+
+#define taskname "__Quang__"
+
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 2e5 + 7;
+ll __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+ll n,m;
+set<string>vec;
+char a[2050];
+bool used[2050];
+ll temp = 0;
+string x = "()";
+void out(){
+	for(int i =0; i<n; i++) cout<<a[i];
+}
+bool check(char a[]){
+	int i=0, ngoacmo =0, dosau =0;
+	while(i<n){
+		if(a[i]== '(') ngoacmo++;
+		else{
+			if(ngoacmo==0){
+				return false;
+			}
+			ngoacmo--;
+		}
+		i++;
+	}
+	if(ngoacmo==0) return true;
+	else return false;
+}
+void backtrack(int pos){
+	
+	for(int i=0; i<=1; i++){
+		if(used[pos]== false){
+			a[pos] = x[i];
+			used[pos]=true;
+			if(pos==n-1){
+				if(check(a)){
+					if(temp==m-1){
+						out();
+						return;
+					}
+					else temp++;
+				}
+			}
+			else backtrack(pos+1);
+			used[pos]=false;
+		}	
+	}
+}
+
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	cin>>n>>m;
+	backtrack(0);
+	return 0;
+}
