@@ -1,0 +1,220 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000007
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define double long double
+//#define cas(x,i) ({case x:cout<<i;break;} )
+#define taskname "__Quang__"
+using namespace std;
+using ull = unsigned long long;
+//const int inf = 1e9;
+//const int maxn = 2e5 + 7;
+//const double phi = 1.618034;
+//ll __lcm(int a, int b){
+//	return (a / __gcd(a,b)) * b;
+//}
+//int par[maxn], sz[maxn];
+//void make_set(int n){
+//	for(int i =1; i<=n; i++){
+//		par[i] = i;
+//		sz[i] = 1;
+//	}
+//}
+//int find_set(int v){
+//	return v == par[v] ? v : par[v] = find_set(par[v]);
+//}
+//void join(int a, int b){
+//	a= find_set(a);
+//	b = find_set(b);
+//	if(a != b){
+//		if(sz[a] < sz[b]) swap(a,b);
+//		sz[a] += sz[b];
+//		par[b] = a;
+//	}
+//}
+const int maxn = 1010;
+bool a[maxn][maxn];
+bool flag[maxn];
+int match[maxn], Queue[maxn], b[maxn], T[maxn];
+bool InQueue[maxn];
+bool InPath[maxn];
+int NewBase;
+bool Mark[maxn];
+int n, m, Front, Rear, start= 1, finish; 
+int mx = maxn - 5;
+void inp(){
+	scanf("%d%d", &n, &m);
+	for(int i = 0 ; i<= mx; i++){
+		for(int j =0 ; j<= mx; j++){
+			a[i][j] = false;
+		}
+	}
+	for( int i = 0; i<m; i++){
+		int u,v;
+		scanf("%d%d", &u, &v);
+		a[u][v] = true;
+		a[v][u] = true;
+	}
+	for(int i =0; i<= mx; i++) Queue[i] = 1;
+}
+void init(){
+	for(int i =0; i<= mx; i++){
+		match[i] = 0;
+	}
+}
+void initBFS(){
+	Front = 1;
+	Rear = 1;
+	Queue[1] = start;
+	for(int i =0; i<= mx ; i++){
+		InQueue[i] = false;
+	}
+	InQueue[start] = true;
+//	memset(T, sizeof(T), 0);
+	for(int i =0; i<=mx; i++) T[i] = 0;
+	for(int i =1; i<=n; i++){
+		b[i] = i;
+		
+	}
+	finish = 0;
+	
+}
+//void Push(int v){
+//	Rear++;
+//	Queue[Rear] = v;
+//	InQueue[v] = true;
+//}
+//int Pop(int Front){
+//	int p = Queue[Front];
+////	Front++;
+//	return p;
+//}
+
+int FindCommonAncestor(int p, int q){
+		for(int i =0 ;i<=mx; i++){
+			InPath[i] = false;
+		}
+		do{
+			p = b[p];
+			InPath[p] = true;
+			if(p==start) break;
+			p = T[match[p]];
+		}while(true);
+		do{
+			q = b[q];
+			if(InPath[q]== true) break;
+			q = T[match[q]];
+			
+		}while(true);
+		return q;
+}
+void ResetTrace(int x){
+		int u,v;
+		v = x;
+		while(b[v] != NewBase){
+			u = match[v];
+			Mark[b[v]] = true;
+			Mark[b[u]] = true;
+			v = T[u];
+			if(b[v] != NewBase) T[v] = u;
+		}
+}
+void BlossomShrink(int p, int q){
+	for(int i =0; i<=mx; i++) Mark[i] = false;
+	NewBase = FindCommonAncestor(p,q);
+	ResetTrace(p);
+	ResetTrace(q);
+	if(b[p] != NewBase) T[p] = q;
+	if(b[q] != NewBase) T[q] = p;
+	for(int i =1 ; i<=n; i++){
+		if(Mark[b[i]]== true) b[i] = NewBase;
+	}
+	for(int i =1; i<=n; i++){
+		if((InQueue[i]==false) and (b[i]==NewBase) ){
+			Rear++; Queue[Rear] = i; InQueue[i] = true; 
+		}
+	}	
+}
+void FindAugmentingPath(){
+	initBFS();
+	do{
+		int u = Queue[Front];
+		Front++;
+		for(int v = 1; v<=n; v++){
+			if( (a[u][v]== true )  and ( match[u] !=v) and (b[u] != b[v] )){
+				if((v==start ) or (match[v] !=0) and (T[match[v]] !=0)){
+					BlossomShrink(u,v);
+				}
+				else{
+					if(T[v] ==0){
+						if(match[v]==0){
+							T[v]=u; finish = v;
+							return;
+						}
+						else{
+							T[v] = u;
+							Rear++; Queue[Rear] = match[v];
+							InQueue[match[v]] = true;
+						}
+					}
+				}
+			}
+		}
+	}while(Front <= Rear);
+}
+void Enlarge(){
+	do{
+		int v= T[finish];
+		int next = match[v];
+		match[v] = finish;
+		match[finish] = v;
+		finish = next;
+	}while(finish !=0);
+}
+void solve(){
+	for(int u = 1; u<=n; u++){
+		if(match[u]==0){
+			start = u;
+			FindAugmentingPath();
+			if(finish !=0 ) Enlarge();
+			
+		}
+	}
+}
+void Result(){
+	int cnt = 0;
+	for(int i =0; i<=mx; i++) flag[i] = false;
+	for(int u =1; u<=n; u++){
+		if(match[u] > u){
+			cnt++;
+//			cout<<u<<" "<<match[u]<<'\n';
+			flag[u] = true;
+			flag[match[u]] = true;
+		}
+	}
+	for(int i =1; i<=n; i++){
+		if(!flag[i]){
+			cnt++;
+//			flag[i]=true;
+		}
+	}
+	cout<<cnt;
+}
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	inp();
+	init();
+	solve();
+	Result();
+	return 0;
+}
