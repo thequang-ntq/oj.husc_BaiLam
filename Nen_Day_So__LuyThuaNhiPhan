@@ -1,0 +1,142 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define MOD 1000000000
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define double long double
+//#define cas(x,i) ({case x:cout<<i;break;} )
+#define taskname "__Quang__"
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9;
+const int maxn = 1e5 + 7;
+const double phi = 1.618034;
+int __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+//int par[maxn], sz[maxn];
+//void make_set(int n){
+//	for(int i =1; i<=n; i++){
+//		par[i] = i;
+//		sz[i] = 1;
+//	}
+//}
+//int find_set(int v){
+//	return v == par[v] ? v : par[v] = find_set(par[v]);
+//}
+//void join(int a, int b){
+//	a= find_set(a);
+//	b = find_set(b);
+//	if(a != b){
+//		if(sz[a] < sz[b]) swap(a,b);
+//		sz[a] += sz[b];
+//		par[b] = a;
+//	}
+//}
+//vector<int>vec1,vec2;
+//int n;
+//class PartitionSet {
+//public:
+//  bool canPartition(const vector<int> &num) {
+//    int sum = 0;
+//    for (int i = 0; i < num.size(); i++) {
+//      sum += num[i];
+//    }
+//    if (sum % 2 != 0) {
+//      return false;
+//    }
+//
+//    vector<vector<int>> dp(num.size(), vector<int>(sum / 2 + 1, -1));
+//    return this->canPartitionRecursive(dp, num, sum / 2, 0);
+//  }
+//bool flag = false;
+//private:
+//  bool canPartitionRecursive(vector<vector<int>> &dp, const vector<int> &num, int sum,
+//                             int currentIndex) {
+//    if (sum == 0) {
+//    
+//		
+//      return true;
+//    }
+//
+//    if (num.empty() || currentIndex >= num.size()) {
+//      return false;
+//    }
+//    if (dp[currentIndex][sum] == -1) {
+//      if (num[currentIndex] <= sum) {
+//        if (canPartitionRecursive(dp, num, sum - num[currentIndex], currentIndex + 1)) {
+//          dp[currentIndex][sum] = 1;
+////          for(int i =1; i<= currentIndex; i++){
+////          	vec1.push_back(i);
+////		  }
+////		  for(int i = currentIndex+1; i<=n; i++){
+////		  	vec2.push_back(i);
+////		  }
+//
+//          return true;
+//        }
+//      }
+//      dp[currentIndex][sum] = canPartitionRecursive(dp, num, sum, currentIndex + 1) ? 1 : 0;
+//    }
+//
+//    if (dp[currentIndex][sum] == 1 ){
+////    	for(int i =1; i<= currentIndex; i++){
+////          	vec1.push_back(i);
+////		  }
+////		  for(int i = currentIndex+1; i<=n; i++){
+////		  	vec2.push_back(i);
+////		  }
+//	if(currentIndex >= n- n/2-1 && currentIndex <= n/2+1 && !flag){
+//			for(int i =1; i<= currentIndex; i++){
+//	   	       	vec1.push_back(i);
+//			}
+//			  for(int i = currentIndex+1; i<=n; i++){
+//		  			vec2.push_back(i);
+//		  	}
+//		  	flag =true;
+//		  }
+//		  return true;
+//	}
+//	else return false;
+//  }
+//};
+bool pr(ll n){
+	if(n<=1) return false;
+	if(n<=3) return true;
+	for(ll i = 2; i<=n; i++ ){
+		if(n%i==0) return false;
+	}
+	return true;
+}
+//cong thuc :(n+1)*pow(2,n-2)
+//luy thua modulo cong MOD
+ll n, d, a[maxn], p[maxn], s, res;
+ll binpow(ll a, ll n){
+	if(n==0) return 1;
+	s = binpow(a, n/2);
+	if(n%2==0){
+		return ((s % MOD) * (s%MOD)) % MOD;
+	}
+	else{
+		return (( ( (s %MOD) *(s%MOD) ) % MOD ) * (a % MOD) ) % MOD;
+	}
+}
+int main(int argc, char *argv[]) {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	ll n; cin>>n;
+	if(n==1){
+		cout<<1; return 0;
+	}
+	ll s = binpow(2,n-2);
+	cout<< (((n+1)%MOD) * (s % MOD)) % MOD;	
+	return 0;
+}
