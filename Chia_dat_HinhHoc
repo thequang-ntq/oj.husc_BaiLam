@@ -82,7 +82,10 @@ bool cmp(Point a, Point b){
 bool cmp2(Point a, Point b){
 	return a.y < b.y;
 }
-vector<Point>vec1, vec2;
+double dientich(Point A, Point B, Point C){
+	return (0.5*abs((C.x-A.x)*(B.y-A.y)-(B.x-A.x)*(C.y-A.y)));
+}
+vector<Point>vec;
 vector<Point>dp;
 int main() {
 	MO;
@@ -95,74 +98,41 @@ int main() {
 	int n = t;
 	while(t--){
 		double x,y; cin>>x>>y;
-		vec1.push_back({x,y});
-		vec2.push_back({x,y});
+		vec.push_back({x,y});
+//		vec2.push_back({x,y});
 		dp.push_back({x,y});
 	}
-	bool used[5050]; memset(used, false, sizeof(used));
-	sort(begin(vec1), end(vec1), cmp);
-	sort(begin(dp), end(dp), cmp);
-	sort(begin(vec2), end(vec2), cmp2);
-	Point p1(vec1[0].x, vec1[0].y);
-	double ck = vec1[0].y;
-	bool flag= false;
-	Point p2(vec1[vec1.size()-1].x, vec1[vec1.size()-1].y);
-	for(int i =vec1.size()-2; i>=0; i--){
-		if(p2.y == ck || (p2.x == p1.x && p2.y == p1.y ) ){
-			p2.x = vec1[i].x;
-			p2.y = vec1[i].y;
-		}
-		else{
-			flag = true;
+	double area1 =0, area2 = 0, area = 0;
+	Point p1(vec[0].x, vec[0].y);
+	Point p2(vec[1].x, vec[1].y); 
+	for(int i =0; i < vec.size()-1; i++ ){
+		area += dientich(vec[0], vec[i], vec[i+1]);		
+	}
+	Point f1,f2,f3,f4;
+	for(int i = 1 ; i< vec.size()-1; i++){
+		area1 += dientich(p1, vec[i], vec[i+1]);
+//		cout<<area1<<'\n';
+		if(fabs(area1 - area/2) <= 1e-6){
+			f1.x = p1.x; f1.y = p1.y;
+			f2.x = vec[i+1].x; f2.y = vec[i+1].y;
+//			cout<<f1.x<<" "<<f1.y<<" "<<f2.x<<" "<<f2.y<<'\n';
 			break;
 		}
 	}
-	if(flag==false){
-		p2.x = vec1[vec1.size()-1].x;
-		p2.y = vec1[vec1.size()-1].y;
-		flag = true;
-	}
-	line d1(p1,p2);
-	flag = false;
-	Point p3(vec2[0].x, vec2[0].y);
-	Point p4(vec2[vec2.size()-1].x, vec2[vec2.size()-1].y);
-	Point check;
-	for(int i= 1; i< vec2.size(); i++){
-		if( (p3.x==p1.x && p3.y == p1.y) || (p3.x==p2.x && p3.y == p2.y ) ){
-			p3.x = vec2[i].x;
-			p3.y = vec2[i].y;
-		}
-		else{
-			flag = true;
+	vec.push_back({p1.x,p1.y});
+	for(int i = vec.size()-1; i > 2 ; i--){
+		area2 += dientich(p2, vec[i], vec[i-1]);
+//		cout<<area2<<'\n';
+		if(fabs(area2 - area/2) <= 1e-6){
+			f3.x = p2.x; f3.y = p2.y;
+			f4.x = vec[i-1].x; f4.y = vec[i-1].y;
+//			cout<<f3.x<<" "<<f3.y<<" "<<f4.x<<" "<<f4.y<<'\n';
 			break;
 		}
 	}
-	if(flag==false){
-		p3.x = vec2[0].x;
-		p3.y = vec2[0].y;
-		flag= true;
-	}
-	flag = false;
-	double uv = p3.x;
-	for(int i = vec2.size()-2; i>=0; i--){
-		if((p4.x == p1.x && p4.y == p1.y) || (p4.x == p2.x && p4.y == p2.y ) || (p4.x  == p3.x && p4.y == p3.y) || (p4.x == uv) ){
-			p4.x = vec2[i].x;
-			p4.y = vec2[i].y;
-		}
-		else{
-			flag =true;
-			break;
-		}
-		
-	}
-	if(flag == false){
-		p4.x = vec2[vec2.size()-1].x;
-		p4.y = vec2[vec2.size()-1].y;
-		flag = true;
-	}
-	flag = false;
-	line d2(p3,p4);
-	Point gd = giao_diem(d1, d2);
+	line d1(f1,f2);
+	line d2(f3,f4);
+	Point gd = giao_diem(d1,d2);
 //	cout<<p1.x<<" "<<p1.y<<" "<<p2.x<<" "<<p2.y<<" "<<p3.x << " "<<p3.y << " "<<p4.x << " " << p4.y <<'\n';
 	if(n==3){
 		cout<< (dp[0].x + dp[0].y) /2 * 1.0 <<'\n';
