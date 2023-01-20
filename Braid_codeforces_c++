@@ -1,0 +1,350 @@
+#pragma GCC optimize("03,unroll-loops")
+#pragma GCC optimize("Ofast")
+#include <bits/stdc++.h>
+#define MO ios_base::sync_with_stdio(false); cin.tie(nullptr)
+#define MAX(a, b) ( (a > b) ? a : b)
+#define MIN(a, b) ( (a < b) ? a : b)
+#define ABS(x) (x <0 ? -x : x)
+#define MOD 9929
+#define div6 166666668
+#define mod 998244353
+#define ll long long
+#define taskname "__Quang__"
+#define double long double
+using namespace std;
+using ull = unsigned long long;
+const int inf = 1e9 + 7;
+const int maxn = 2e5 + 7;
+const double Pi = 3.1415926535897323846;
+const double eps = 1e-9;
+int sign(double x){
+	if(x > eps) return 1;
+	if(x < -eps) return -1;
+	return 0;
+}
+long long __lcm(int a, int b){
+	return (a / __gcd(a,b)) * b;
+}
+//int a[maxn];
+//ll st[4*maxn], lazy[4*maxn];
+//int n,k;
+//void build(int id, int l, int r){
+//	if(l==r){
+//		st[id] = a[l];
+//		return; 
+//	}
+//	int mid = (l+r)>>1;
+//	build(2*id, l, mid);
+//	build(2*id+1, mid + 1, r);
+//	st[id] = max(st[2*id], st[2*id+1]);
+//}
+////void fix(int id, int l, int r){
+////	if(!lazy[id]) return;
+////	st[id] += lazy[id];
+////	if(l!=r){
+////		lazy[2*id] += lazy[id];
+////		lazy[2*id+1] += lazy[id];
+////	}
+////	lazy[id] = 0;
+////}
+//void update(int id, int l, int r, int i, int val){
+////	fix(id, l, r);
+//	if(i < l || i > r) return;
+//	if( l==r){
+//		st[id] = val;
+//		return;
+//	}
+//	int mid = (l+r)>>1;
+//	update(2*id, l, mid, i, val);
+//	update(2*id+1, mid+1, r, i, val);
+//	st[id] = max(st[2*id], st[2*id+1]);
+//}
+//ll get(int id, int l, int r, int u, int v){
+////	fix(id,l,r);
+//	if(u > r || v<l) return -inf;
+//	if( u<= l && v>=r){
+//		return st[id];
+//	}
+//	int mid = (l+r)>>1;
+//	ll get1 = get(2*id, l, mid, u, v);
+//	ll get2 = get(2*id+1, mid+1, r, u, v);
+//	return max(get1,get2);
+//}
+//ll dp[4*maxn];
+int main() {
+	MO;
+	if(fopen("countdivisor.inp","r")){
+		freopen("countdivisor.inp","r", stdin);
+		freopen("countdivisor.out","w", stdout);
+	}
+	int Quang = 1;
+//	cin>> Quang; 
+	while(Quang--){
+		int n; cin>>n;
+		string s; cin>>s;
+		string a; cin>>a;
+		char x[8+4*n][12];
+		if(s=="left-over-middle"){
+			char tt = a[0], tt1= a[1], tt2 = a[2];
+			int posleft = 1, posmid = 5, posright = 9;
+			int checkl = 0, checkm =0, checkr = 1;
+			int directionl =0, directionm =0, directionr =1;
+			for(int i = 1; i<=1+4*n; i++){
+				for(int j =1; j<=9; j++){
+					if(j==posleft){
+						if(posleft != 1 && posleft !=9){
+							if(posleft==posmid){
+								cout<<tt;
+							}
+							else if(posleft==posright){
+								cout<<tt2;
+							}
+							else cout<<tt;
+						}
+						else{
+							cout<<tt;
+							if(i==1) checkl=0;
+							else checkl++;
+						}	
+					}
+					else if(j==posmid){
+						if(posmid != 1 && posmid !=9){
+							if(posleft==posmid){
+								cout<<tt;
+							}
+							else if(posmid==posright){
+								cout<<tt1;
+							}
+							else cout<<tt1;
+						}
+						else{
+							cout<<tt1;
+							checkm++;	
+						}
+						
+					}
+					else if(j==posright){
+						if(posright != 1 && posright !=9){
+							if(posright==posmid){
+								cout<<tt1;
+							}
+							else if(posleft==posright){
+								cout<<tt2;
+							}
+							else cout<<tt2;
+						}
+						else{
+							cout<<tt2;
+//							checkr++;	
+							if(i==1) checkr = 1;
+							else checkr++;
+						}
+						
+					}
+					else cout<<'.';
+				}
+				if(directionl==0){
+					if(checkl==0) posleft++;
+					else{
+//						checkl++;
+						if(checkl==5){
+							checkl =0;
+							directionl = 1;
+							posleft--;
+						}
+					}
+				}
+				else{
+					if(checkl==0) posleft--;
+					else {
+//						checkl++;
+						if(checkl == 5){
+							checkl =0;
+							directionl =0;
+							posleft++;
+						}
+					}
+				}
+				if(directionm==0){
+					if(checkm==0) posmid--;
+					else{
+//						checkm++;
+						if(checkm==5){
+							checkm =0;
+							directionm = 1;
+							posmid++;
+							
+						}
+					}
+				}
+				else{
+					if(checkm==0) posmid++;
+					else{
+//						checkm++;
+						if(checkm==5){
+							checkm =0;
+							directionm = 0;
+							posmid--;
+						}
+					}
+				}
+				if(directionr == 0){
+					if(checkr==0) posright--;
+					else{
+//						checkr++;
+						if(checkr==5){
+							checkr =0;
+							directionr = 1;
+							posright++;
+						}
+					}
+				}
+				else{
+					if(checkr==0) posright++;
+					else{
+//						checkr++;
+						if(checkr==5){
+							checkr=0;
+							directionr = 0;
+							posright--;
+						}
+					}
+				}
+				cout<<'\n';
+			}
+		}
+		//right-over-middle
+		
+		
+		else{
+			char tt = a[0], tt1= a[1], tt2 = a[2];
+			int posleft = 1, posmid = 5, posright = 9;
+			int checkl = 1, checkm =0, checkr = 0;
+			int directionl =1, directionm =1, directionr =0;
+			for(int i = 1; i<=1+4*n; i++){
+				for(int j =1; j<=9; j++){
+					if(j==posleft){
+						if(posleft != 1 && posleft !=9){
+							if(posleft==posmid){
+								cout<<tt1;
+							}
+							else if(posleft==posright){
+								cout<<tt;
+							}
+							else cout<<tt;
+						}
+						else{
+							cout<<tt;
+							if(i==1) checkl=1;
+							else checkl++;
+						}	
+					}
+					else if(j==posmid){
+						if(posmid != 1 && posmid !=9){
+							if(posleft==posmid){
+								cout<<tt1;
+							}
+							else if(posmid==posright){
+								cout<<tt2;
+							}
+							else cout<<tt1;
+						}
+						else{
+							cout<<tt1;
+							checkm++;	
+						}
+						
+					}
+					else if(j==posright){
+						if(posright != 1 && posright !=9){
+							if(posright==posmid){
+								cout<<tt2;
+							}
+							else if(posleft==posright){
+								cout<<tt;
+							}
+							else cout<<tt2;
+						}
+						else{
+							cout<<tt2;
+//							checkr++;	
+							if(i==1) checkr = 0;
+							else checkr++;
+						}
+						
+					}
+					else cout<<'.';
+				}
+				if(directionl==0){
+					if(checkl==0) posleft++;
+					else{
+//						checkl++;
+						if(checkl==5){
+							checkl =0;
+							directionl = 1;
+							posleft--;
+						}
+					}
+				}
+				else{
+					if(checkl==0) posleft--;
+					else {
+//						checkl++;
+						if(checkl == 5){
+							checkl =0;
+							directionl =0;
+							posleft++;
+						}
+					}
+				}
+				if(directionm==0){
+					if(checkm==0) posmid--;
+					else{
+//						checkm++;
+						if(checkm==5){
+							checkm =0;
+							directionm = 1;
+							posmid++;
+							
+						}
+					}
+				}
+				else{
+					if(checkm==0) posmid++;
+					else{
+//						checkm++;
+						if(checkm==5){
+							checkm =0;
+							directionm = 0;
+							posmid--;
+						}
+					}
+				}
+				if(directionr == 0){
+					if(checkr==0) posright--;
+					else{
+//						checkr++;
+						if(checkr==5){
+							checkr =0;
+							directionr = 1;
+							posright++;
+						}
+					}
+				}
+				else{
+					if(checkr==0) posright++;
+					else{
+//						checkr++;
+						if(checkr==5){
+							checkr=0;
+							directionr = 0;
+							posright--;
+						}
+					}
+				}
+				cout<<'\n';
+			}
+		}
+	}
+	return 0;
+}
