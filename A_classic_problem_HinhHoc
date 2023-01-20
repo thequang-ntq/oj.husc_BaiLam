@@ -1,0 +1,369 @@
+#include <bits/stdc++.h>
+using namespace std;
+#include <bits/extc++.h> /** keep-include */
+using namespace __gnu_pbds;
+#define int long long
+
+#define rep(i, a, b) for(int i = a; i < (b); ++i)
+#define all(x) begin(x), end(x)
+#define sz(x) (int)(x).size()
+typedef long long ll;
+typedef long double ld;
+typedef pair<int, int> pii;
+typedef vector<int> vi;
+const ld eps = 1e-28;
+
+struct Segment {
+    typedef Segment S;
+    pair<ld,ld> x, y;
+    explicit Segment(pair<ld, ld> ox, pair<ld, ld> oy) {
+        if (ox.first > oy.first) swap(ox, oy);
+        x = ox;
+        y = oy;
+    }
+    
+    ld evaluate(ld x_value) const {
+        if (x.first == y.first) return x.second;
+        ld slope = (x.second - y.second) / (x.first - y.first);
+        return x.second + (x_value - x.first) * slope;
+    }
+
+    ld find_common_point(S s) const {
+        ld l = max(x.first, s.x.first);
+        ld r = min(y.first, s.y.first);
+        return l + (r-l) / 2.0;
+    }
+
+    bool operator==(S s) const {
+        ld x_value = find_common_point(s);
+        return abs(evaluate(x_value)-s.evaluate(x_value)) < eps;
+    }
+
+    bool operator<(S s) const {
+        ld x_value = find_common_point(s);
+        return (not ((*this) == s) and evaluate(x_value) < s.evaluate(x_value));
+    }
+
+   
+
+    friend ostream& operator<<(ostream& os, S s) {
+        return os << "Segment((" << s.x.first << "," << s.x.second << "),(" << s.y.first << "," << s.y.second << "))";
+    }
+
+};
+
+struct Fraction {
+    typedef Fraction F;
+    int x, y;
+    explicit Fraction(int xx,int yy=1) {
+        assert(yy!=0);
+        if (yy<0) xx = -xx, yy = -yy;
+        int d = __gcd(abs(xx), abs(yy));
+        xx /= d;
+        yy /= d;
+        x = xx, y = yy;
+    }
+
+    Fraction operator+(Fraction o) const {
+        return Fraction(x*o.y + o.x*y, y*o.y);
+    }
+    Fraction operator-(Fraction o) const {
+        return (*this) + Fraction(-o.x, o.y);
+    }
+    Fraction operator*(Fraction o) const {
+        return Fraction(x*o.x, y*o.y);
+    }
+    Fraction operator/(Fraction o) const {
+        return Fraction(x*o.y, y*o.x);
+    }
+    bool operator<(Fraction o) const {
+        return x*o.y < o.x*y;
+    }
+    bool operator==(Fraction o) const {
+        //cout << x << ' ' << o.y << ' ' << o.x << ' ' << y << endl;
+        return x*o.y == o.x*y;
+    }
+
+    bool operator<=(Fraction o) const {
+        return (*this) == o or (*this) < o;
+    }
+
+    friend ostream& operator<<(ostream& os, F f) {
+        return os << f.x << "/" << f.y;
+    }
+
+};
+
+struct SegmentInt {
+    typedef SegmentInt S;
+    pii x, y;
+    explicit SegmentInt(pii ox, pii oy) {
+        if (tie(ox.first, ox.second) > tie(oy.first, oy.second)) swap(ox, oy);
+        x = ox;
+        y = oy;
+    }
+    
+    Fraction evaluate(int x_value) const {
+        if (x.first == y.first) return Fraction(x.second, 1);
+        Fraction slope = Fraction(x.second - y.second, x.first - y.first);
+        return Fraction(x.second) + (Fraction(x_value) - Fraction(x.first)) * slope;
+    }
+
+    pii find_common_point(S s) const {
+        int l = max(x.first, s.x.first);
+        int r = min(y.first, s.y.first);
+        return {l, r};
+    }
+
+    bool operator==(S s) const {
+        pii common = find_common_point(s);
+        Fraction ta = evaluate(common.first);
+        Fraction tb = evaluate(common.second);
+        Fraction sa = s.evaluate(common.first);
+        Fraction sb = s.evaluate(common.second);
+        return (ta==sa) and (tb == sb);
+    }
+
+    bool operator<(S s) const {
+        pii common = find_common_point(s);
+        return (not ((*this) == s) and (evaluate(common.first) <= s.evaluate(common.first) and evaluate(common.second) <= s.evaluate(common.second)));
+    }
+
+    friend ostream& operator<<(ostream& os, S s) {
+        return os << "Segment((" << s.x.first << "," << s.x.second << "),(" << s.y.first << "," << s.y.second << "))";
+    }
+};
+
+template<class T>
+using Tree = tree<T, null_type, less<T>, rb_tree_tag,
+    tree_order_statistics_node_update>;
+
+const int maxn = 2e5;
+int n, m;
+pii poly[maxn], points[maxn];
+set<pii> in_poly;
+
+pair<ld, ld> new_poly[maxn], new_points[maxn];
+int result[maxn];
+
+vector<ld> all_points;
+vector<Segment> add_segment[maxn], rem_segment[maxn];
+vector<pair<pair<ld,ld>, int> > query_points[maxn];
+Tree<Segment> t;
+
+vi all_int_points;
+vector<SegmentInt> add_segment_int[maxn], rem_segment_int[maxn], vertical_segment[maxn];
+vector<pair<pii, int> > query_points_int[maxn];
+Tree<SegmentInt> t2;
+
+map<int, vi> M;
+
+int get_all_points_index(ld x) {
+    return distance(begin(all_points), lower_bound(all(all_points), x));
+}
+
+int get_all_int_points_index(int x) {
+    return distance(begin(all_int_points), lower_bound(all(all_int_points), x));
+}
+
+pair<ld, ld> rotate(pii p) {
+    return {p.first * cos(1) - p.second * sin(1), p.first * sin(1) + p.second * cos(1)};
+}
+
+template <class T> int sgn(T x) { return (x > 0) - (x < 0); }
+template<class T>
+struct Point {
+	typedef Point P;
+	T x, y;
+	explicit Point(T x=0, T y=0) : x(x), y(y) {}
+	bool operator<(P p) const { return tie(x,y) < tie(p.x,p.y); }
+	bool operator==(P p) const { return tie(x,y)==tie(p.x,p.y); }
+	P operator+(P p) const { return P(x+p.x, y+p.y); }
+	P operator-(P p) const { return P(x-p.x, y-p.y); }
+	P operator*(T d) const { return P(x*d, y*d); }
+	P operator/(T d) const { return P(x/d, y/d); }
+	T dot(P p) const { return x*p.x + y*p.y; }
+	T cross(P p) const { return x*p.y - y*p.x; }
+	T cross(P a, P b) const { return (a-*this).cross(b-*this); }
+	T dist2() const { return x*x + y*y; }
+	double dist() const { return sqrt((double)dist2()); }
+	// angle to x-axis in interval [-pi, pi]
+	double angle() const { return atan2(y, x); }
+	P unit() const { return *this/dist(); } // makes dist()=1
+	P perp() const { return P(-y, x); } // rotates +90 degrees
+	P normal() const { return perp().unit(); }
+	// returns point rotated 'a' radians ccw around the origin
+	P rotate(double a) const {
+		return P(x*cos(a)-y*sin(a),x*sin(a)+y*cos(a)); }
+	friend ostream& operator<<(ostream& os, P p) {
+		return os << "(" << p.x << "," << p.y << ")"; }
+};
+
+
+template<class P> bool onSegment(P s, P e, P p) {
+	return p.cross(s, e) == 0 && (s - p).dot(e - p) <= 0;
+}
+
+template<class P>
+bool inPolygon(vector<P> &p, P a, bool strict = true) {
+	int cnt = 0, n = sz(p);
+	rep(i,0,n) {
+		P q = p[(i + 1) % n];
+		if (onSegment(p[i], q, a)) return !strict;
+		//or: if (segDist(p[i], q, a) <= eps) return !strict;
+		cnt ^= ((a.y<p[i].y) - (a.y<q.y)) * a.cross(p[i], q) > 0;
+	}
+	return cnt;
+}
+
+typedef Point<int> P;
+vector<P> int_poly;
+
+
+
+
+
+main() {
+	cin.tie(0)->sync_with_stdio(0);
+	cin.exceptions(cin.failbit);
+    cin >> n >> m;
+    rep(i,0,n) { 
+        int x, y; cin >> x >> y; poly[i] = {x,y}; in_poly.insert(poly[i]); 
+        all_int_points.push_back(x);    
+    }
+    
+    memset(result, -1, sizeof(result));
+    rep(i,0,m) { 
+        int x, y; cin >> x >> y; points[i] = {x,y}; 
+        if (in_poly.count(points[i])) result[i] = 1;
+        all_int_points.push_back(x);
+    }
+
+    sort(all(all_int_points));
+    all_int_points.erase(unique(all(all_int_points)), end(all_int_points));
+
+
+    rep(i,0,n) {
+        SegmentInt seg = SegmentInt(poly[i], poly[(i+1)%n]);
+        if (seg.x.first != seg.y.first) {
+            int id = get_all_int_points_index(seg.x.first);
+            add_segment_int[id].push_back(seg);
+            id = get_all_int_points_index(seg.y.first);
+            rem_segment_int[id].push_back(seg);
+        } else {
+            int id = get_all_int_points_index(seg.x.first);
+            vertical_segment[id].push_back(seg);
+        }
+    }
+
+    rep(i,0,m) {
+        if (result[i] == -1) {
+            int id = get_all_int_points_index(points[i].first);
+            query_points_int[id].push_back({points[i], i});
+        }
+    }
+
+    rep(i,0,sz(all_int_points)) {
+        for (auto seg: rem_segment_int[i]) {
+            //cout << "erase " << seg << endl;
+            t2.erase(seg);
+        }
+
+        for (auto p: query_points_int[i]) {
+            SegmentInt tmp = SegmentInt(p.first, p.first);
+            int x = t2.order_of_key(tmp);
+            auto it = t2.find_by_order(x);
+            if (it!=end(t2) and (*it)==tmp) {
+                //cout << "online " << (*it) << ' ' << tmp << ' ' << p.first.first << ' ' << p.first.second << ' ' << (*it).evaluate(p.first.first) << ' ' << tmp.evaluate(p.first.first) << endl;
+                result[p.second] = 1;
+                continue;
+            }
+        }
+
+        for (auto seg: add_segment_int[i]) {
+            //out << "insert " << seg << endl;
+            t2.insert(seg);
+        }
+    }
+
+    rep(i,0,sz(all_int_points)) {
+        M.clear();
+        for (auto p: query_points_int[i]) M[p.first.second].push_back(p.second);
+        for (auto p: vertical_segment[i]) {
+            for (auto it=M.lower_bound(p.x.second); it!=M.end() and (*it).first <= p.y.second; ++it) {
+                for (auto j: (*it).second) {
+                    //cout << "on vertical line " << points[j].first << " " << points[j].second << endl;
+                    result[j] = 1;
+                }
+            }
+        }   
+    }
+
+
+    rep(i,0,n) {
+        new_poly[i] = rotate(poly[i]);
+        all_points.push_back(new_poly[i].first);
+    }
+
+    rep(i,0,m) {
+        new_points[i] = rotate(points[i]);
+        all_points.push_back(new_points[i].first);
+    }
+
+    sort(all(all_points));
+    all_points.erase(unique(all(all_points)), end(all_points));
+
+    rep(i,0,n) {
+        Segment seg = Segment(new_poly[i], new_poly[(i+1)%n]);
+        int id = get_all_points_index(seg.x.first);
+        add_segment[id].push_back(seg);
+        id = get_all_points_index(seg.y.first);
+        rem_segment[id].push_back(seg);
+    }
+
+    rep(i,0,m) {
+        if (result[i] == -1) {
+            int id = get_all_points_index(new_points[i].first);
+            query_points[id].push_back({new_points[i], i});
+        }
+    }
+
+    int_poly.clear();
+    rep(i,0,n) int_poly.push_back(P(points[i].first, points[i].second));
+
+
+    rep(i,0,sz(all_points)) {
+        for (auto seg: rem_segment[i]) {
+            //cout << "erase " << seg << endl;
+            t.erase(seg);
+        }
+
+        for (auto p: query_points[i]) {
+            Segment tmp = Segment(p.first, p.first);
+            int x = t.order_of_key(tmp);
+            auto it = t.find_by_order(x);
+            if (it!=end(t) and (*it)==tmp) {
+                assert(false);
+                continue;
+            }
+
+            result[p.second] = (x%2==1);
+        }
+
+        for (auto seg: add_segment[i]) {
+            //cout << "insert " << seg << endl;
+            t.insert(seg);
+        }
+    }
+
+
+
+    rep(i,0,m) {
+        //cout << points[i].first << ' ' << points[i].second << ' ';
+        if (result[i]) cout << "YES";
+        else cout << "NO";
+        cout << '\n';
+    }
+
+    return 0;
+}
