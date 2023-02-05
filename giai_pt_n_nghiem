@@ -1,0 +1,16 @@
+import math
+def fac(n):
+    x = 1
+    i = n
+    while i>=2:
+        x = x * i
+        i = i -1
+    return x
+t = (int(input()))
+while t > 0:
+    n,k = map(int,input().split())
+    tren = k
+    duoi = n + k - 1
+    temp = duoi - tren
+    print((int)(fac(duoi) / (fac(tren) * fac(temp))))
+    t = t -1
