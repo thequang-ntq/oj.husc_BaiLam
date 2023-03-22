@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct Hocsinh
+{
+	char mahs[30];
+	float diemtb;
+};
+
+void nhap(Hocsinh a[], int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		cin >> a[i].mahs;
+		cin >> a[i].diemtb;
+	}
+}
+
+void giamdan(Hocsinh a[], int n)
+{
+	for(int j = 1; j < n; j++)
+	{
+		Hocsinh k = a[j];
+		int i = j - 1;
+		while(i >= 0 && a[i].diemtb < k.diemtb)
+		{
+			a[i + 1] = a[i];
+			i--;
+		}
+		a[i + 1] = k;
+	}
+	for(int i = 0; i < n - 1; i++)
+	{
+		int j = i + 1;
+		while(a[i].diemtb == a[j].diemtb && j < n)
+		{
+			if(strcmp(a[i].mahs, a[j].mahs) > 0)
+			{
+				swap(a[i],a[j]);
+			}
+			j++;
+		}
+	}
+}
+
+void xuat(Hocsinh a[], int n)
+{
+	for(int i = 0; i < n ;i++)
+	{
+		cout << a[i].mahs << " ";
+	}
+}
+
+int main()
+{
+	int n;	cin >> n;
+	Hocsinh a[n];
+	nhap(a, n);
+	giamdan(a, n);
+	xuat(a, n);
+}
