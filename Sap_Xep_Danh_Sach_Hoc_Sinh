@@ -1,0 +1,53 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+struct Student {
+    string mahs;
+    float diemtb;
+};
+
+
+bool compare(Student a, Student b) {
+    if (a.diemtb == b.diemtb)
+        return a.mahs < b.mahs; 
+    return a.diemtb > b.diemtb;
+}
+
+
+void sortStudentList(Student A[], int N) {
+    sort(A, A + N, compare);
+}
+
+
+void printStudentList(Student A[], int N) {
+    for (int i = 0; i < N; i++) {
+        cout <<" " <<A[i].mahs;
+    }
+}
+void printStudentIDList(Student A[], int N) {
+    for (int i = 0; i < N; i++) {
+        string chars = A[i].mahs.substr(0, 2);
+        string digits = A[i].mahs.substr(2);
+        int number = stoi(digits);
+        cout << chars << number << endl;
+    }
+}
+
+int main() {
+    int N;
+    cin >> N;
+    Student A[N];
+    for (int i = 0; i < N; i++) {
+        cin >> A[i].mahs;
+        cin >> A[i].diemtb;
+    }
+
+    sortStudentList(A, N);
+    printStudentList(A, N);
+ 
+
+    return 0;
+}
