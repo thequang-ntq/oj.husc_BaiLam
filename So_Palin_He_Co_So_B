@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+const long long mod = 1e9 + 7;
+const long long N = 1e6 + 5;
+#define MO ios_base :: sync_with_stdio (0); cin.tie (0); cout.tie(0);
+int main(){
+	MO
+	int t;
+	cin >> t;
+	while (t--){
+		ll n;
+		cin >> n;
+		string a = to_string(n);
+		bool check1 = 1;
+		for (int i = 0 ; i<a.size();i++){
+			if (a[i] != a[a.size() - i - 1]){
+				check1 = 0;
+				break;
+			}
+		}
+		stack<char> v;
+		while (n > 0){
+			v.push(n%2 + '0');
+			n/=2;
+		}
+		string s;
+		while (!v.empty()){
+			s+=v.top();
+			v.pop();
+		}
+		bool check = 1;
+		for (int i = 0 ; i<s.size()/2;i++){
+			if (s[i] != s[s.size() - i -1]){
+				check = 0;
+				break;
+			}
+		}
+		if (check && check1) cout << "Yes\n";
+		else cout << "No\n";
+	}
+}
