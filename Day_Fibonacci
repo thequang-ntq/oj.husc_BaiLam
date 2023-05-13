@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+void hoanvi(string &a,string &b){
+	string tmp=a;
+	a=b;
+	b=tmp; 
+} 
+string tong(string a,string b){
+	if(a.size()<b.size()){
+		hoanvi(a,b); 
+	} 
+	int c=a.size()-b.size();
+	for(int i=0;i<c;i++){
+		b="0"+b; 
+	} 
+	int ans,nho=0; 
+	string tong =""; 
+	for(int i=a.size()-1;i>=0;i--){
+		int sum=a[i]-'0'+b[i]-'0'+nho;
+		ans=sum%10;
+		nho=sum/10; 
+		tong=(char)(ans+'0')+tong; 
+	}
+	if(nho==1){
+		tong='1'+tong;
+	} 
+	return tong; 
+} 
+void fibonacci(int n){
+	string a="0",b="1";
+	vector<string> se;
+	se.push_back(a);
+	se.push_back(b);
+	for(int i=2;i<=n;i++){
+		string c=tong(a,b);
+		se.push_back(c); 
+		a=b;
+		b=c; 
+	} 
+	cout<<*se.rbegin()<<endl; 
+} 
+int main(){
+	int n;cin>>n;
+	fibonacci(n);
+	return 0; 
+}
