@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define fr(i,a,b) for(int i=a;i<=b;i++)
+#define ll long long
+int main(){
+	string s;
+	while(getline(cin,s)){
+		string str;
+		s = "+" + s;
+		fr (i,0,s.size()-1) {
+			if (s[i] == '+'||s[i] == '-') str += ' ';
+			str += s[i] ;
+			if (s[i] == '+'||s[i] == '-') str += ' ';
+		}
+		stringstream ss(str);
+		string temp;
+		ll so = 0;
+		bool dau = true;
+		while (ss>>temp) {			
+			if (temp == "+") dau = true;
+			if (temp == "-") dau = false;
+			if (temp != "+" && temp != "-") {
+				if (dau == true) so += stoll(temp);
+				else so -= stoll(temp);
+			}
+		}
+		cout<<so<<"\n";
+	}
+}
