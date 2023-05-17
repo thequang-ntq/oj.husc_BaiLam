@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+string * tachchuoi(string str){
+    static string subs[2];
+    subs[0] = str.substr(0,str.find(" "));
+    subs[1] = str.substr(str.find(" ")+1,str.length());
+    return subs;
+}
+
+string emailAddress(string str){
+    string eAddr = "";
+    string str2 = str; 
+    while (str2.find(" ") < 500){
+        string *tc = tachchuoi(str2);
+        eAddr = eAddr + tc[0];
+        str2 = tc[1];
+    }
+    string s = str2;
+    //Chuyen eAddr sang thuong
+    for (int i=0; i<eAddr.length(); i++)
+        eAddr[i] = tolower(eAddr[i]);
+    //Chuyen str2 sang thuong
+    for (int i=0; i<str2.length(); i++)
+        str2[i] = tolower(str2[i]);
+
+    return str2 + "." + eAddr + "@xyz.edu.vn";
+}
+
+int main(){
+    system("cls");
+    string str;
+    getline(cin, str);
+    while (str.find("  ") < 500){
+        str.erase(str.find("  "),1);
+    }
+    if (str[0] == ' ')
+        str.erase(0,1);
+    if (str[str.length()-1] == ' ')
+        str.erase(str.length()-1,1); 
+    cout << emailAddress(str);
+    
+    return 0;
+}
