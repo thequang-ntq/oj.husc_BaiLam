@@ -1,0 +1,128 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+/*typedef struct node {
+	int data;
+	struct node *next;
+} Node; //*/
+
+typedef struct linkedList{ 
+    string masach; 
+    string tensach; 
+    int soluong; 
+    int dongia; 
+    struct linkedList *next; 
+} LinkedList ; 
+
+
+LinkedList *CreateNode(string ms, string ts, int sl, int dg){
+	LinkedList *tem = new LinkedList; 
+	tem->masach = ms;
+	tem->tensach = ts;
+	tem->soluong = sl;
+	tem->dongia = dg;
+	tem->next = NULL;
+	return tem;
+}
+
+/*void addHead(Node *& head, int value){
+	Node *tem = CreateNode(value);
+	if(head == NULL)
+		head = tem; 
+	else{
+		tem->next = head; 
+		head = tem;	      	
+	}
+}  //*/
+    void InsertFirst(LinkedList *& head, string masach, string tensach, int soluong, int dongia){
+		LinkedList *tem = CreateNode(masach,tensach,soluong, dongia);
+		if(head == NULL)
+			head = tem; 
+		else{
+			//Kiam tra ma sach da ton tai chua
+			bool kt = true;
+			for (LinkedList *p=head; p!=NULL; p=p->next)
+				if (p->masach == masach){
+					kt = false;
+					break;
+				}
+			if (kt){
+				tem->next = head; 
+				head = tem;	 
+			}     	
+	}
+	}
+
+
+/*
+void displayList(Node *& head){
+	Node *tem = head;
+	while (tem->next != NULL){
+		cout << tem->data << " -> ";
+		tem = tem->next;
+	};
+	cout << tem->data << endl;
+} //*/
+
+/*void deleteHead(Node *& head){
+	if (head == NULL)
+		cout << "Danh sach rong!";
+	else
+		head = head->next;
+} //*/
+
+void DeleteFirst(LinkedList *& head){
+	if (head != NULL)
+		head = head->next;
+}
+
+void Update(LinkedList *& head, string masach, int soluongban){
+	LinkedList *head2;
+	for (LinkedList *p=head; p!=NULL; p=p->next)
+		if ((p->masach == masach) && (p->soluong >= soluongban)){
+			p->soluong = (p->soluong - soluongban);
+			break;
+		}
+
+}
+
+int TotalValue(LinkedList * head, string masach){
+	int TotalValue = -1;
+	for (LinkedList *p=head; p!=NULL; p=p->next)
+		if (p->masach == masach)
+			TotalValue = (p->soluong)*(p->dongia);
+	return TotalValue;
+
+}
+
+int main(){
+	system("cls");
+	LinkedList *head = NULL;
+	string action = "", ms, ts;
+	int sl, dg;
+	while (action != "finish"){
+		cin >> action;
+		if (action == "insert"){
+				cin >> ms >> ts >> sl >> dg;
+				InsertFirst(head, ms, ts, sl, dg); 
+		}
+		else
+			if (action == "delete")
+				DeleteFirst(head); 
+			else
+				if (action == "update"){
+					int slban;
+					cin >> ms >> slban;
+					Update(head, ms, slban); 
+				}
+				else
+					if (action == "totalvalue"){
+						cin >> ms;
+						cout << TotalValue(head, ms) << endl;
+						
+					}
+					else{
+					}
+	} //*/
+	return 0;
+}
