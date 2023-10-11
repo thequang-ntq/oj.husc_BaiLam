@@ -1,0 +1,77 @@
+// 1-time dfs
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <vector>
+#define FOR(i,s,e) for(int i=(s);i<(int)(e);i++)
+#define FOE(i,s,e) for(int i=(s);i<=(int)(e);i++)
+#define CLR(s) memset(s,0,sizeof(s))
+#define PB push_back
+using namespace std;
+typedef vector<int> vi;
+
+const int VX = 55;
+int  g[VX][VX];
+bool vis[VX];
+vi h[VX];       // ans
+int n, m;
+
+int low[VX],bt[VX],t;
+
+//////////////////////////////
+// Return TRUE:  has bridge
+//////////////////////////////
+bool dfs(int u,int p){
+	bool res = 0;
+	bt[u]=low[u]=++t; // birth time starts from 1
+	FOE(v,1,n) if(g[u][v]) {
+		g[u][v]--;
+		g[v][u]--;
+		if (v == p) continue;
+		h[v].PB(u);
+		if (!bt[v]){
+			res |= dfs(v,u);
+			low[u] = min(low[u], low[v]);
+		}else{ low[u] = min(low[u],bt[v]); }
+		if (bt[u] < low[v]) { res = 1; } // bridge
+	}
+	return res;
+}
+
+int main() {
+	int T;
+	scanf("%d", &T);
+	while (T--) {
+		scanf("%d%d", &n, &m);
+
+		CLR(g);
+		while (m--) {
+			int x, y;
+			scanf("%d%d", &x, &y);
+			g[x][y]++;
+			g[y][x]++;
+		}
+
+		FOE(i,1,n) {
+			h[i].clear();
+		}
+
+		CLR(bt); CLR(low);
+		t=0;
+
+		// find bridge + assign orientation
+		bool ok = !dfs(1,-1);
+
+		if (ok) {
+			puts("YES");
+			FOE(i,1,n) {
+				FOR(j,0,h[i].size()) {
+					printf("%d %d\n", i, h[i][j]);
+				}
+			}
+		} else {
+			puts("NO");
+		}
+	}
+	return 0;
+}
