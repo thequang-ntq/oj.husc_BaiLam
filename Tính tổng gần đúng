@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+double giai_thua(int n) {
+    if(n == 1)
+        return 1;
+    else
+        return n * giai_thua(n - 1);
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    double x;
+    cin >> x;
+        double s = 1; 
+        int n = 1;
+        double a = pow(x, n) / giai_thua(n); 
+        while (a >= 1e-9) { 
+            s += a; 
+            n++; 
+            a = pow(x, n) / giai_thua(n); 
+        }
+        cout << fixed << setprecision(4) << s << '\n'; 
+
+    return 0;
+}
