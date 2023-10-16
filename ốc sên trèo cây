@@ -1,0 +1,26 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    long long h, a, b;
+    cin >> h >> a >> b;
+
+    if(a >= h){
+        cout << 1 << '\n';
+        exit(0);
+    }
+    if(a <= b){
+        cout << -1 << '\n';
+        exit(0);
+    }
+    long long s = a;
+    long long d = 1;
+    if(a > b){
+        while(s < h){
+            s += a;
+            s -= b;
+            d++;
+        }
+        cout << d << '\n';
+    }
+}
