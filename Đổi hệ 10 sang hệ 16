@@ -1,0 +1,23 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+int main() {
+  long long n, k = 0, A[1000];
+  cin >> n;
+  while (n != 0) {
+    A[k] = n % 16;
+    n = n / 16;
+    k++;
+  }
+  for (int i = k - 1; i >= 0; i--) {
+    if ((A[i] < 10) && (A[i] >= 0)) cout << A[i];
+    else {
+      if (A[i] == 10) cout << "A";
+      if (A[i] == 11) cout << "B";
+      if (A[i] == 12) cout << "C";
+      if (A[i] == 13) cout << "D";
+      if (A[i] == 14) cout << "E";
+      if (A[i] == 15) cout << "F";
+    }
+  }
+}
