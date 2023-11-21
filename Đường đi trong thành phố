@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+const int maxn = 41000;
+using namespace std;
+int n,m;
+int k = m;
+long long ddd = 0;
+vector<pair<int,int>>adj[maxn];
+bool vis[maxn];
+struct edge{
+	long long x,y,w;
+};
+vector<edge>edges;
+void inp(){
+	cin>>n>>m;
+	k = m;
+	for(int i=0; i<m; i++){
+		int u,v,w; cin>>u>>v>>w;
+		adj[u].push_back({v,w});
+		adj[v].push_back({u,w});
+		edges.push_back({u,v,w});
+		ddd += w;
+	}
+	for(int i=1; i<=n; i++) vis[i] = false;
+}
+long long dijkstra(int s,int t){
+	vector<long long>d(n+1, 1e18);
+	d[s] = 0;
+	//Uu tien lay cap so nho nhat theo khoang cach d[v]
+	priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>>q;
+	q.push({0,s});
+	while(!q.empty()){
+		pair<int,int>top = q.top(); q.pop();
+		int u =  top.second;
+		int kc = top.first;
+		vis[u] = true;
+		if(kc > d[u]) continue;
+		for(auto it: adj[u]){
+			int v = it.first;
+			int w = it.second;
+			vis[v] = true;
+			if(d[v] > d[u] + w){
+				d[v] = d[u] + w;
+				q.push({d[v], v});
+				
+			}
+		}
+	}
+	return d[t];
+}
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	inp();
+	for(int i = 0; i < edges.size(); i++){
+		vector<edge>cp = edges;
+		cp.erase(cp.begin() + i);
+		for(int j = 1; j <= n; j ++){
+			adj[j].clear();
+		}
+		for(int j = 1; j <= n; j ++){
+			vis[j] = false;
+		}
+		for(int j = 0; j < cp.size(); j++){
+			adj[cp[j].x].push_back({cp[j].y, cp[j].w});
+			adj[cp[j].y].push_back({cp[j].x, cp[j].w});
+		}
+		long long w_i = dijkstra(edges[i].x, edges[i].y);
+		if(w_i <= edges[i].w){
+			k -= 1;
+			ddd -= edges[i].w;
+		}
+	}
+	cout << k << " " << ddd;
+	return 0;
+}
